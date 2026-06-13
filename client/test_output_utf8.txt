@@ -1,0 +1,492 @@
+﻿node.exe : FAIL src/__tests__/historyStorage.test.js
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL src/__test...Storage.test.js:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  History Storage Utility
+    ΓêÜ should return an empty array if localStorage is empty (8 ms)
+    ΓêÜ should successfully save a new entry and retrieve it (2 ms)
+    ΓêÜ should keep history sorted by date with newest entries first (1 ms)
+    ΓêÜ should overwrite and merge an existing entry if saved with the same date (1 ms)
+    ├ù should return correct weekly and monthly data sorted oldest first (5 ms)
+    ΓêÜ should handle corrupted JSON string parsing in localStorage gracefully by returning empty array and clearing 
+storage (2 ms)
+    ΓêÜ should handle non-array JSON in localStorage gracefully by clearing storage and returning empty array (1 ms)
+    ΓêÜ should successfully clear history from storage
+    ΓêÜ should return false or empty array and handle errors when localStorage throws exceptions
+
+  ΓùÅ History Storage Utility ΓÇ║ should return correct weekly and monthly data sorted oldest first
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "2026-01-29"
+    Received: "2026-01-25"
+
+    [0m [90m 89 |[39m     expect(weekly)[33m.[39mtoHaveLength([35m7[39m)[33m;[39m
+     [90m 90 |[39m     [90m// Weekly gets the 7 most recent (dates 29 to 35) reversed to oldest first (29, 30, ..., 
+35)[39m
+    [31m[1m>[22m[39m[90m 91 |[39m     
+expect(weekly[[35m0[39m][33m.[39mdate)[33m.[39mtoBe([32m'2026-01-29'[39m)[33m;[39m
+     [90m    |[39m                            [31m[1m^[22m[39m
+     [90m 92 |[39m     expect(weekly[[35m6[39m][33m.[39mdate)[33m.[39mtoBe([32m'2026-01-35'[39m)[33m;[39m
+     [90m 93 |[39m
+     [90m 94 |[39m     [36mconst[39m monthly [33m=[39m getMonthlyData()[33m;[39m[0m
+
+      at Object.toBe (src/__tests__/historyStorage.test.js:91:28)
+
+PASS src/__tests__/carbonCalculator.test.js
+  Carbon Footprint Calculator Utility
+    ΓêÜ should correctly calculate emissions for vegetarian food habit (9 ms)
+    ΓêÜ should correctly calculate emissions for mixed food habit (1 ms)
+    ΓêÜ should correctly calculate emissions for non-vegetarian food habit (1 ms)
+    ΓêÜ should handle edge cases with 0 values for inputs correctly (1 ms)
+    ΓêÜ should throw an error for negative input values (11 ms)
+    ΓêÜ should throw an error for invalid food habit category (1 ms)
+    ΓêÜ should correctly map 0 emissions to a carbon health score of 100
+    ΓêÜ should correctly map 500 emissions to a carbon health score of 50 (1 ms)
+    ΓêÜ should correctly map 1000 or higher emissions to a score of 0
+    ΓêÜ should throw an error if emissions parameters are invalid in score calculator (1 ms)
+
+PASS src/__tests__/billScanner.test.js
+  BillScanner Component
+    ΓêÜ renders initial upload zone correctly (118 ms)
+    ΓêÜ rejects file uploads with unsupported mimetypes (46 ms)
+    ΓêÜ rejects file uploads exceeding the 5MB size limit (61 ms)
+    ΓêÜ accepts valid images, displays preview, and handles resets correctly (235 ms)
+    ΓêÜ handles successful bill scans and calls parent callback (156 ms)
+    ΓêÜ handles scan API failures and reports user-friendly warnings (441 ms)
+
+FAIL src/__tests__/App.test.jsx
+  App Component
+    ├ù renders EcoSense AI heading and dashboard structure (2000 ms)
+
+  ΓùÅ App Component ΓÇ║ renders EcoSense AI heading and dashboard structure
+
+    TestingLibraryElementError: Unable to find an accessible element with the role "heading" and name `/carbon 
+footprint dashboard/i`
+
+    Here are the accessible roles:
+
+      banner:
+
+      Name "":
+      [36m<header[39m
+        [33mclass[39m=[32m"border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      navigation:
+
+      Name "Main Navigation":
+      [36m<nav[39m
+        [33maria-label[39m=[32m"Main Navigation"[39m
+        [33mclass[39m=[32m"flex space-x-2"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      button:
+
+      Name "Calculator":
+      [36m<button[39m
+        [33maria-current[39m=[32m"page"[39m
+        [33mclass[39m=[32m"px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none 
+focus:ring-2 focus:ring-emerald-400 text-emerald-400 bg-emerald-500/10"[39m
+      [36m/>[39m
+
+      Name "Dashboard":
+      [36m<button[39m
+        [33mclass[39m=[32m"px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none 
+focus:ring-2 focus:ring-emerald-400 text-slate-400 hover:text-white"[39m
+      [36m/>[39m
+
+      Name "Drag and drop your bill image here, or click to browse files":
+      [36m<div[39m
+        [33maria-label[39m=[32m"Drag and drop your bill image here, or click to browse files"[39m
+        [33mclass[39m=[32m"group cursor-pointer border-2 border-dashed rounded-xl p-8 flex flex-col items-center 
+justify-center transition-all border-slate-800 hover:border-slate-700 bg-slate-950/20"[39m
+        [33mrole[39m=[32m"button"[39m
+        [33mtabindex[39m=[32m"0"[39m
+      [36m/>[39m
+
+      Name "Compute Footprint":
+      [36m<button[39m
+        [33mclass[39m=[32m"w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-850 
+disabled:text-slate-500 disabled:border-slate-800 text-slate-950 font-bold tracking-wide transition-all shadow-lg 
+hover:shadow-emerald-500/10 flex items-center justify-center space-x-2 focus:outline-none focus:ring-2 
+focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:cursor-not-allowed border 
+border-transparent"[39m
+        [33mtype[39m=[32m"submit"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      main:
+
+      Name "":
+      [36m<main[39m
+        [33mclass[39m=[32m"flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 outline-none"[39m
+        [33mid[39m=[32m"main-content"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      region:
+
+      Name "Carbon Footprint Calculator":
+      [36m<section[39m
+        [33maria-labelledby[39m=[32m"dashboard-title"[39m
+        [33mclass[39m=[32m"mb-10 text-center md:text-left max-w-3xl"[39m
+      [36m/>[39m
+
+      Name "Calculator and Scanning Panels":
+      [36m<section[39m
+        [33maria-label[39m=[32m"Calculator and Scanning Panels"[39m
+        [33mclass[39m=[32m"lg:col-span-5 space-y-6"[39m
+      [36m/>[39m
+
+      Name "Results Panel":
+      [36m<section[39m
+        [33maria-label[39m=[32m"Results Panel"[39m
+        [33mclass[39m=[32m"lg:col-span-7 space-y-8"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      heading:
+
+      Name "Carbon Footprint Calculator":
+      [36m<h1[39m
+        [33mclass[39m=[32m"text-4xl md:text-5xl font-bold font-display text-white tracking-tight leading-none 
+mb-4"[39m
+        [33mid[39m=[32m"dashboard-title"[39m
+      [36m/>[39m
+
+      Name "AI Bill Scanner":
+      [36m<h3[39m
+        [33mclass[39m=[32m"text-xl font-bold font-display text-white mb-2"[39m
+      [36m/>[39m
+
+      Name "No Emissions Calculated":
+      [36m<h3[39m
+        [33mclass[39m=[32m"text-lg font-bold font-display text-slate-300 mb-2"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      paragraph:
+
+      Name "":
+      [36m<p[39m
+        [33mclass[39m=[32m"text-slate-400 text-base md:text-lg leading-relaxed"[39m
+      [36m/>[39m
+
+      Name "":
+      [36m<p[39m
+        [33mclass[39m=[32m"text-slate-400 text-sm mb-6"[39m
+      [36m/>[39m
+
+      Name "":
+      [36m<p[39m
+        [33mclass[39m=[32m"text-sm text-slate-300 font-semibold group-hover:text-white transition-colors"[39m
+      [36m/>[39m
+
+      Name "":
+      [36m<p[39m
+        [33mclass[39m=[32m"text-xs text-slate-500 mt-2"[39m
+      [36m/>[39m
+
+      Name "":
+      [36m<p[39m
+        [33mclass[39m=[32m"text-slate-400 text-sm mb-6"[39m
+      [36m/>[39m
+
+      Name "":
+      [36m<p[39m
+        [33mclass[39m=[32m"text-slate-500 text-sm max-w-sm"[39m
+      [36m/>[39m
+
+      Name "":
+      [36m<p />[39m
+
+      --------------------------------------------------
+      status:
+
+      Name "":
+      [36m<div[39m
+        [33maria-live[39m=[32m"polite"[39m
+        [33mclass[39m=[32m"sr-only"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m/>[39m
+
+      Name "":
+      [36m<div[39m
+        [33maria-live[39m=[32m"polite"[39m
+        [33mclass[39m=[32m"sr-only"[39m
+        [33mrole[39m=[32m"status"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      group:
+
+      Name "Calculate Your Emissions":
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"space-y-6"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      spinbutton:
+
+      Name "Transport distance in kilometers per week":
+      [36m<input[39m
+        [33maria-invalid[39m=[32m"false"[39m
+        [33maria-label[39m=[32m"Transport distance in kilometers per week"[39m
+        [33mclass[39m=[32m"w-full px-4 py-3 rounded-xl bg-slate-950/80 border text-white transition-all 
+outline-none focus:ring-2 focus:ring-emerald-500/20 [appearance:textfield] 
+[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-slate-800 
+hover:border-slate-700 focus:border-emerald-500"[39m
+        [33mid[39m=[32m"transport-input"[39m
+        [33mmin[39m=[32m"0"[39m
+        [33mplaceholder[39m=[32m"e.g. 150"[39m
+        [33mtype[39m=[32m"number"[39m
+        [33mvalue[39m=[32m""[39m
+      [36m/>[39m
+
+      Name "Electricity usage in kilowatt-hours per month":
+      [36m<input[39m
+        [33maria-invalid[39m=[32m"false"[39m
+        [33maria-label[39m=[32m"Electricity usage in kilowatt-hours per month"[39m
+        [33mclass[39m=[32m"w-full px-4 py-3 rounded-xl bg-slate-950/80 border text-white transition-all 
+outline-none focus:ring-2 focus:ring-emerald-500/20 [appearance:textfield] 
+[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-slate-800 
+hover:border-slate-700 focus:border-emerald-500"[39m
+        [33mid[39m=[32m"electricity-input"[39m
+        [33mmin[39m=[32m"0"[39m
+        [33mplaceholder[39m=[32m"e.g. 250"[39m
+        [33mtype[39m=[32m"number"[39m
+        [33mvalue[39m=[32m""[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      combobox:
+
+      Name "Your primary food diet category":
+      [36m<select[39m
+        [33maria-invalid[39m=[32m"false"[39m
+        [33maria-label[39m=[32m"Your primary food diet category"[39m
+        [33mclass[39m=[32m"w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 
+hover:border-slate-700 text-white transition-all outline-none focus:ring-2 focus:ring-emerald-500/20 
+focus:border-emerald-500 appearance-none"[39m
+        [33mid[39m=[32m"food-select"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      option:
+
+      Name "Vegetarian (Low emissions)":
+      [36m<option[39m
+        [33mvalue[39m=[32m"veg"[39m
+      [36m/>[39m
+
+      Name "Mixed Diet (Average emissions)":
+      [36m<option[39m
+        [33mvalue[39m=[32m"mixed"[39m
+      [36m/>[39m
+
+      Name "Non-Vegetarian (High emissions)":
+      [36m<option[39m
+        [33mvalue[39m=[32m"non-veg"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      contentinfo:
+
+      Name "":
+      [36m<footer[39m
+        [33mclass[39m=[32m"border-t border-slate-900 bg-slate-950 py-8 mt-12"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+      link:
+
+      Name "Privacy Policy":
+      [36m<a[39m
+        [33mclass[39m=[32m"hover:text-slate-350 transition-colors"[39m
+        [33mhref[39m=[32m"#privacy"[39m
+      [36m/>[39m
+
+      Name "Terms of Service":
+      [36m<a[39m
+        [33mclass[39m=[32m"hover:text-slate-350 transition-colors"[39m
+        [33mhref[39m=[32m"#terms"[39m
+      [36m/>[39m
+
+      --------------------------------------------------
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col min-h-screen font-sans bg-slate-950 text-slate-100 antialiased 
+selection:bg-emerald-500/30"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center space-x-3"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex 
+items-center justify-center text-slate-950 font-bold font-display text-lg shadow-lg shadow-emerald-500/20"[39m
+                [36m>[39m
+                  [0mES[0m
+                [36m</div>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xl font-bold font-display tracking-tight text-white"[39m
+                [36m>[39m
+                  [0mEcoSense [0m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"text-emerald-400"[39m
+                  [36m>[39m
+                    [0mAI[0m
+                  [36m</span>[39m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<nav[39m
+                [33maria-label[39m=[32m"Main Navigation"[39m
+                [33mclass[39m=[32m"flex space-x-2"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33maria-current[39m=[32m"page"[39m
+                  [33mclass[39m=[32m"px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none 
+focus:ring-2 focus:ring-emerald-400 text-emerald-400 bg-emerald-500/10"[39m
+                [36m>[39m
+                  [0mCalculator[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none 
+focus:ring-2 focus:ring-emerald-400 text-slate-400 hover:text-white"[39m
+                [36m>[39m
+                  [0mDashboard[0m
+                [36m</button>[39m
+              [36m</nav>[39m
+            [36m</div>[39m
+          [36m</header>[39m
+          [36m<main[39m
+            [33mclass[39m=[32m"flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 outline-none"[39m
+            [33mid[39m=[32m"main-content"[39m
+          [36m>[39m
+            [36m<section[39m
+              [33maria-labelledby[39m=[32m"dashboard-title"[39m
+              [33mclass[39m=[32m"mb-10 text-center md:text-left max-w-3xl"[39m
+            [36m>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"text-4xl md:text-5xl font-bold font-display text-white tracking-tight 
+leading-none mb-4"[39m
+                [33mid[39m=[32m"dashboard-title"[39m
+              [36m>[39m
+                [0mCarbon Footprint Calculator[0m
+              [36m</h1>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-slate-400 text-base md:text-lg leading-relaxed"[39m
+              [36m>[39m
+                [0mEstimate your impact, understand your major resource drivers, and improve your Carbon Health Score 
+using our standardized calculation model.[0m
+              [36m</p>[39m
+            [36m</section>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"[39m
+            [36m>[39m
+              [36m<section[39m
+                [33maria-label[39m=[32m"Calculator and Scanning Panels"[39m
+                [33mclass[39m=[32m"lg:col-span-5 space-y-6"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"w-full bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 md:p-8 
+backdrop-blur-sm shadow-xl flex flex-col"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33maria-live[39m=[32m"polite"[39m
+                    [33mclass[39m=[32m"sr-only"[39m
+                    [33mrole[39m=[32m"status"[39m
+                  [36m/>[39m
+                  [36m<h3[39m
+                    [33mclass[39m=[32m"text-xl font-bold font-display text-white mb-2"[39m
+                  [36m>[39m
+                    [0mAI Bill Scanner[0m
+                  [36m</h3>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-slate-400 text-sm mb-6"[39m
+                  [36m>[39m
+                    [0mUpload an image of your electricity or fuel bill to automatically scan metrics using Google 
+Gemini.[0m
+                  [36m</p>[39m
+                  [36m<div[39m
+                    [33maria-label[39m=[32m"Drag and drop your bill image here, or click to browse files"[39m
+                    [33mclass[39m=[32m"group cursor-pointer border-2 border-dashed rounded-xl p-8 flex flex-col 
+items-center justify-center transition-all border-slate-800 hover:border-slate-700 bg-slate-950/20"[39m
+                    [33mrole[39m=[32m"button"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                  [36m>[39m
+                    [36m<input[39m
+                      [33maccept[39m=[32m"image/*"[39m
+                      [33mclass[39m=[32m"hidden"[39m
+                      [33mtabindex[39m=[32m"-1"[39m
+                      [33mtype[39m=[32m"file"[39m
+                    [36m/>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"w-12 h-12 rounded-xl bg-slate-900/80 border border-slate-800 flex 
+items-center justify-center text-slate-400 group-hover:text-emerald-400 transition-colors mb-4"[39m
+                    [36m>[39m
+                      [36m<svg[39m
+                        [33mclass[39m=[32m"w-6 h-6"[39m
+                        [33mfill[39m=[32m"none"[39m
+                        [33mstroke[39m=[32m"currentColor"[39m
+                        [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [36m>[39m
+                        [36m<path[39m
+                          [33md[39m=[32m"M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"[39m
+                          [33mstroke-linecap[39m=[32m"round"[39m
+                          [33mstroke-linejoin[39m=[32m"round"[39m
+                          [33mstroke-width[39m=[32m"1.5"[39m
+                        [36m/>[39m
+                      [36m</svg>[39m
+                    [36m</div>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-sm text-slate-300 font-semibold group-hover:text-white 
+transition-colors"[39m
+                    [36m>[39m
+                      [0mDrag & drop bill image here[0m
+                    [36m</p>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-xs text-slate-500 mt-2"[39m
+                    [36m>[39m
+                      [0mSupports JPEG, PNG, or WEBP up to 5MB[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"w-full bg-slate-...
+
+    [0m [90m  7 |[39m     
+     [90m  8 |[39m     [90m// Check if the welcome heading renders[39m
+    [31m[1m>[22m[39m[90m  9 |[39m     [36mconst[39m headingElement [33m=[39m 
+screen[33m.[39mgetByRole([32m'heading'[39m[33m,[39m { 
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 10 |[39m       name[33m:[39m [35m/carbon footprint dashboard/i[39m 
+     [90m 11 |[39m     })[33m;[39m
+     [90m 12 |[39m     expect(headingElement)[33m.[39mtoBeInTheDocument()[33m;[39m[0m
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByRole (src/__tests__/App.test.jsx:9:35)
+
+Test Suites: 2 failed, 2 passed, 4 total
+Tests:       2 failed, 24 passed, 26 total
+Snapshots:   0 total
+Time:        5.004 s
+Ran all test suites.
