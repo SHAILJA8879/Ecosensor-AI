@@ -9,148 +9,178 @@ EcoSense AI directly solves the sustainability tracking challenge by implementin
 2. **Reduce**: Once calculated, the platform consults the AI Carbon Coach. Powered by Gemini 1.5 Flash, the coach generates personalized, context-aware savings actions, a 7-day green transition challenge, and estimates potential score improvements.
 3. **Track**: Users can switch to the tracking Dashboard to trace their score progress timeline (weekly/monthly scopes), view percentage splits, and review historical log archives.
 
-## Tech Stack
+🌍 Problem Statement
 
-- **Client**: React (Vite), Tailwind CSS (v4.0), Chart.js
-- **Server**: Node.js, Express, Helmet, Cors
-- **AI Core**: Google Gemini 1.5 Flash (`@google/generative-ai`)
-- **Testing**: Jest, React Testing Library, Supertest
-- **Code Quality**: ESLint (with `eslint-plugin-jsx-a11y` for accessibility checks)
+Carbon emissions from everyday activities — transport, food choices, and energy consumption — are major contributors to climate change. Most individuals lack awareness of their personal impact and don't know where to start reducing it.
 
----
+EcoSense AI solves this by combining real-time carbon calculations with Google Gemini AI to deliver personalized, actionable insights — not generic sustainability tips.
 
-## Project Structure
 
-```text
-ecosense-ai/
-├── client/                 # Frontend React Application
-│   ├── public/             # Static public assets
-│   ├── src/                # Source code
-│   │   ├── components/     # UI components
-│   │   │   ├── common/     # Reusable inputs, buttons, etc.
-│   │   │   └── layout/     # Navigation, headers, layouts
-│   │   ├── hooks/          # Custom React hooks
-│   │   ├── context/        # React Context providers
-│   │   ├── utils/          # Helper utilities and formatting
-│   │   ├── __tests__/      # Jest and React Testing Library tests
-│   │   ├── App.jsx         # App main component
-│   │   ├── main.jsx        # Mounting and entry point
-│   │   └── index.css       # Tailwind directives
-│   ├── babel.config.js     # Transpiles JS/JSX for Jest testing
-│   ├── eslint.config.js    # Modern ESLint Flat Config (including accessibility)
-│   ├── jest.config.js      # Client Jest configuration
-│   ├── jest.setup.js       # Jest setup and custom matchers
-│   ├── package.json        # Frontend dependencies
-│   └── vite.config.js      # Vite compilation configurations
-│
-├── server/                 # Backend Node.js/Express Application
-│   ├── src/
-│   │   ├── config/         # System and database configurations
-│   │   ├── controllers/    # Route controllers
-│   │   ├── middleware/     # Custom Express middleware (auth, validator, error)
-│   │   ├── routes/         # Express API routes
-│   │   ├── utils/          # Utility functions (AI helper, formatting)
-│   │   ├── __tests__/      # Server integration and unit tests
-│   │   ├── app.js          # Express app initialization
-│   │   └── server.js       # Application entry point
-│   ├── eslint.config.js    # Backend ESLint Flat Config
-│   ├── jest.config.js      # Server Jest configuration
-│   └── package.json        # Backend dependencies
-│
-├── .env.example            # Multi-layer environmental variable template
-├── .gitignore              # Repository git ignore rules
-└── README.md               # Setup and project documentation (This file)
-```
+✨ Features
 
----
+🧮 Carbon Footprint Calculator
 
-## Installation & Setup
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18.x or higher recommended)
-- [npm](https://www.npmjs.com/) (bundled with Node.js)
+Input transport (km/week), food habits, and electricity usage
+Calculates CO₂ emissions using research-based emission factors
+Generates a Carbon Health Score (0–100)
 
-### 1. Clone & Set Environment Variables
-Copy `.env.example` to the root folder as `.env` and fill in the required keys:
 
-```bash
+📸 AI Bill Scanner (Gemini Vision)
+
+
+Upload electricity or fuel bill images
+Gemini 1.5 Flash extracts kWh/fuel data automatically
+Auto-fills the calculator — no manual entry needed
+
+
+🤖 AI Carbon Coach (Gemini Text)
+
+
+Personalized analysis referencing your exact emission numbers
+Identifies your top emission source
+Generates 5 specific, actionable recommendations
+Creates a 7-day improvement challenge
+Predicts your score improvement if recommendations are followed
+
+
+📊 Dashboard & History
+
+
+Carbon Health Score gauge with trend indicators
+Weekly and monthly progress charts (Chart.js)
+Category breakdown: Transport vs Food vs Electricity
+Full history table with sort functionality
+
+
+
+🛠️ Tech Stack
+
+LayerTechnologyFrontendReact 18 + Vite + Tailwind CSSBackendNode.js + ExpressAIGoogle Gemini 1.5 Flash (Text + Vision)ChartsChart.jsTestingJest + React Testing LibrarySecurityHelmet.js + express-rate-limit + express-validatorDeploymentGoogle Cloud Run + Firebase Hosting
+
+
+🚀 Getting Started
+
+Prerequisites
+
+
+Node.js 18+
+Google Gemini API Key (Get one here)
+
+
+Installation
+
+bash# Clone the repository
+git clone https://github.com/SHAILJA8879/Ecosensor-AI.git
+cd Ecosensor-AI
+
+# Install all dependencies
+npm run install-all
+
+# Set up environment variables
 cp .env.example .env
-```
+# Add your GEMINI_API_KEY to .env
 
-Ensure you get a Google Gemini API Key from [Google AI Studio](https://aistudio.google.com/) and paste it in the `.env` file under `GEMINI_API_KEY`.
-
-### 2. Install Dependencies
-
-You need to install dependencies for both the frontend (client) and the backend (server).
-
-#### Client Setup:
-```bash
-cd client
-npm install
-```
-
-#### Server Setup:
-```bash
-cd ../server
-npm install
-```
-
----
-
-## Running the Application
-
-For a full local development experience, run both the backend API server and frontend development server concurrently.
-
-### Start the Server (API)
-The backend server uses `nodemon` to automatically restart on changes.
-
-```bash
-cd server
+# Run development servers (frontend + backend)
 npm run dev
-```
-By default, the server will start on [http://localhost:5000](http://localhost:5000).
 
-### Start the Client (Frontend)
-The client uses Vite for fast hot-module reloading.
+Open http://localhost:5173 in your browser.
 
-```bash
-cd client
-npm run dev
-```
-By default, the Vite development server will start on [http://localhost:5173](http://localhost:5173).
+Environment Variables
 
----
+envPORT=5000
+NODE_ENV=development
+GEMINI_API_KEY=your_gemini_api_key_here
+VITE_API_URL=http://localhost:5000
 
-## Running Tests
 
-Tests are written using Jest for both client and server.
+📁 Project Structure
 
-### Run Client Tests
-```bash
-cd client
+ecosense-ai/
+├── client/                     # React frontend
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Calculator.jsx      # Carbon footprint form
+│   │   │   ├── BillScanner.jsx     # Gemini Vision upload
+│   │   │   ├── AICoach.jsx         # AI recommendations
+│   │   │   ├── Dashboard.jsx       # Charts & history
+│   │   │   └── ScoreGauge.jsx      # Score visualization
+│   │   ├── utils/
+│   │   │   ├── carbonCalculator.js # Emission calculations
+│   │   │   └── historyStorage.js   # localStorage management
+│   │   └── __tests__/             # Jest test suites
+├── server/                     # Express backend
+│   ├── routes/
+│   │   ├── carbonCoach.js         # Gemini text endpoint
+│   │   └── billScanner.js         # Gemini vision endpoint
+│   ├── middleware/
+│   │   └── validate.js            # Input validation
+│   └── index.js                   # Server entry point
+├── .env.example
+├── .gitignore
+└── README.md
+
+
+🔒 Security
+
+
+All API keys stored in environment variables (never hardcoded)
+Helmet.js for HTTP security headers
+Rate limiting on all AI endpoints (10 requests/15 min)
+Input validation and sanitization via express-validator
+File upload validation (type + size limits)
+CORS configured for production domains only
+
+
+
+♿ Accessibility
+
+
+WCAG AA compliant color contrast (4.5:1 ratio)
+Full keyboard navigation support
+aria-labels on all interactive elements
+aria-live regions for dynamic content updates
+Skip navigation link
+Semantic HTML throughout
+Screen reader compatible charts with text alternatives
+
+
+
+🧪 Testing
+
+bash# Run all tests
 npm test
-```
 
-### Run Server Tests
-```bash
-cd server
-npm test
-```
+# Run with coverage report
+npm test -- --coverage
 
----
+Test coverage includes:
 
-## Linting & Accessibility
 
-To maintain code standards and web accessibility compliance:
+Carbon calculation utility functions
+localStorage history management
+API route validation
+Bill Scanner file validation
+Component rendering and interaction
 
-### Run Client Linting (React + Accessibility Audit)
-```bash
-cd client
-npm run lint
-```
 
-### Run Server Linting
-```bash
-cd server
-npm run lint
-```
+
+🌐 Live Demo
+
+🔗 View Live App
+
+
+🤝 How It Solves the Challenge
+
+Challenge RequirementEcoSense AI SolutionHelp individuals understand carbon footprintCalculator + category breakdown dashboardTrack emissions over timeHistory with weekly/monthly chartsReduce through simple actionsAI Coach with 7-day challengePersonalized insightsGemini references your exact numbersSimple actions3-input calculator, one-click bill scan
+
+
+📝 License
+
+MIT License — feel free to use and build upon this project.
+
+
+👨‍💻 Author
+
+Shailja — B.Tech CSE Student
+Built for Prompt War Challenge 3 — Carbon Footprint Awareness Platform
