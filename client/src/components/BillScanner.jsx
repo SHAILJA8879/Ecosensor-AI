@@ -126,9 +126,14 @@ export default function BillScanner({ onScanSuccess }) {
         onScanSuccess(result.data);
       }
     } catch (err) {
-      const userFriendlyMsg = err.message.includes('overloaded') || err.message.includes('429')
-        ? 'The server is currently busy scanning bills. Please try again in a moment.'
-        : 'Failed to read bill details. Make sure the image is clear and readable.';
+      console.error(err);
+      let userFriendlyMsg = 'Failed to read bill details. Make sure the image is clear and readable.';
+      
+      if (err.message.includes('overloaded') || err.message.includes('429')) {
+        userFriendlyMsg = 'The server is currently busy scanning bills. Please try again in a moment.';
+      } else if (err.name === 'TypeError' || err.message.includes('fetch')) {
+        userFriendlyMsg = 'Unable to connect to the scanning server. Please verify the backend service is running.';
+      }
       
       setError(userFriendlyMsg);
       setAnnouncement(`Scan failed: ${userFriendlyMsg}`);

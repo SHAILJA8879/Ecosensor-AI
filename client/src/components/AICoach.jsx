@@ -117,9 +117,15 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
         onPlanGenerated(result.data.predictedImprovement.newScore);
       }
     } catch (err) {
-      const errorMsg = err.message.includes('429')
-        ? 'The AI Coach is currently busy helping other users. Please try again in a few moments.'
-        : 'Failed to retrieve your carbon action plan. Check your server settings and try again.';
+      console.error(err);
+      let errorMsg = 'Failed to retrieve your carbon action plan. Check your server settings and try again.';
+      
+      if (err.message.includes('429')) {
+        errorMsg = 'The AI Coach is currently busy helping other users. Please try again in a few moments.';
+      } else if (err.name === 'TypeError' || err.message.includes('fetch')) {
+        errorMsg = 'Unable to connect to the coaching server. Please verify the backend service is running.';
+      }
+      
       setError(errorMsg);
       setAnnouncement(`Coaching error: ${errorMsg}`);
     } finally {
