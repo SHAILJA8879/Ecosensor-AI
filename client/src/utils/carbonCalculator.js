@@ -1,70 +1,102 @@
-/**
- * Emission factors for calculations (kg CO2 equivalent):
- * - Transport: ~0.21 kg CO2/km (avg vehicle)
- * - Electricity: ~0.82 kg CO2/kWh (grid average)
- * - Food Habits: veg ~1.5kg, mixed ~3kg, non-veg ~5kg CO2/day
- */
-export const EMISSION_FACTORS = {
-  TRANSPORT: 0.21, // kg CO2 per km
-  ELECTRICITY: 0.82, // kg CO2 per kWh
-  FOOD: {
-    'veg': 1.5, // kg CO2 per day
-    'mixed': 3.0, // kg CO2 per day
-    'non-veg': 5.0 // kg CO2 per day
-  }
-};
+import { EMISSION_FACTORS } from './constants';
+
+const WEEKS_PER_MONTH = 4.33;
+
+const DAYS_PER_MONTH = 30;
+
+const SCORE_DIVISOR = 10;
+
+const MAX_SCORE = 100;
+
+const MIN_SCORE = 0;
+
+const ROUNDING_FACTOR = 100;
+
+const ROUNDING_OFFSET = 1e-9;
 
 /**
- * Helper to round a floating point number to two decimal places
- * avoiding standard binary-float quirks using Number.EPSILON.
- * 
+ * @description Helper to round a floating point number to two decimal places avoiding standard binary-float quirks using Number.EPSILON.
  * @param {number} num - The number to round
  * @returns {number} The rounded number
+ * @throws {Error} If input is invalid or negative
+ * @example
+ * roundToTwoDecimals(123.456) // => 123.46
  */
 function roundToTwoDecimals(num) {
-  return Math.round((num + 1e-9) * 100) / 100;
+  if (typeof num !== 'number' || num < MIN_SCORE) {
+    throw new Error('Invalid input: must be a non-negative number');
+  }
+
+  return Math.round((num + ROUNDING_OFFSET) * ROUNDING_FACTOR) / ROUNDING_FACTOR;
 }
 
 /**
- * Normalizes and calculates total monthly carbon emissions (kg CO2/month)
- * based on weekly transport, daily food habits, and monthly electricity consumption.
- * 
- * - Transport (weekly) is normalized to monthly: km/week * 4.33 weeks/month * 0.21 kg CO2/km
- * - Food (daily) is normalized to monthly: kg CO2/day * 30 days/month
- * - Electricity (monthly) is calculated: kWh/month * 0.82 kg CO2/kWh
- * 
- * @param {number} transport - The transport distance in km per week (must be >= 0)
- * @param {string} foodHabit - The food habit type ('veg', 'mixed', 'non-veg')
- * @param {number} electricity - The electricity usage in kWh per month (must be >= 0)
- * @returns {{transport: number, food: number, electricity: number, total: number}} The monthly emissions by category and in total (kg CO2)
- * @throws {Error} Throws an error if any input parameter is invalid or negative
- * 
+ * @description Calculates monthly transport emissions
+ * @param {number} kmPerWeek - Weekly distance in km
+ * @returns {number} Monthly CO2 emissions in kg
+ * @throws {Error} If input is invalid or negative
  * @example
- * const result = calculateTotalEmissions(100, 'veg', 200);
- * // Returns: { transport: 90.93, food: 45, electricity: 164, total: 299.93 }
+ * calculateTransport(100) // => 90.93
  */
-export function calculateTotalEmissions(transport, foodHabit, electricity) {
-  // Validate transport input
-  if (typeof transport !== 'number' || isNaN(transport) || transport < 0) {
-    throw new Error('Transport distance must be a non-negative number.');
+export function calculateTransport(kmPerWeek) {
+  if (typeof kmPerWeek !== 'number' || kmPerWeek < MIN_SCORE || isNaN(kmPerWeek)) {
+    throw new Error('Transport distance must be a non-negative number. Invalid input: must be a non-negative number');
   }
 
-  // Validate electricity input
-  if (typeof electricity !== 'number' || isNaN(electricity) || electricity < 0) {
-    throw new Error('Electricity usage must be a non-negative number.');
+  return roundToTwoDecimals(kmPerWeek * WEEKS_PER_MONTH * EMISSION_FACTORS.TRANSPORT_KG_PER_KM);
+}
+
+/**
+ * @description Calculates monthly food emissions
+ * @param {string} foodHabit - The food habit category ('veg', 'mixed', 'non-veg')
+ * @returns {number} Monthly CO2 emissions in kg
+ * @throws {Error} If input is invalid or negative
+ * @example
+ * calculateFood('veg') // => 45
+ */
+export function calculateFood(foodHabit) {
+  if (typeof foodHabit !== 'string') {
+    throw new Error('Food habit: Invalid input: must be a string');
   }
 
-  // Validate food habit input
   const foodFactor = EMISSION_FACTORS.FOOD[foodHabit];
   if (foodFactor === undefined) {
     throw new Error("Food habit must be 'veg', 'mixed', or 'non-veg'.");
   }
 
-  // Calculate normalized monthly emissions (rounded to 2 decimal places using Math.round to avoid JS float precision quirks)
-  const transportEmissions = roundToTwoDecimals(transport * 4.33 * EMISSION_FACTORS.TRANSPORT);
-  const foodEmissions = roundToTwoDecimals(foodFactor * 30);
-  const electricityEmissions = roundToTwoDecimals(electricity * EMISSION_FACTORS.ELECTRICITY);
-  
+  return roundToTwoDecimals(foodFactor * DAYS_PER_MONTH);
+}
+
+/**
+ * @description Calculates monthly electricity emissions
+ * @param {number} kwhPerMonth - Monthly electricity usage in kWh
+ * @returns {number} Monthly CO2 emissions in kg
+ * @throws {Error} If input is invalid or negative
+ * @example
+ * calculateElectricity(200) // => 164
+ */
+export function calculateElectricity(kwhPerMonth) {
+  if (typeof kwhPerMonth !== 'number' || kwhPerMonth < MIN_SCORE || isNaN(kwhPerMonth)) {
+    throw new Error('Electricity usage must be a non-negative number. Invalid input: must be a non-negative number');
+  }
+
+  return roundToTwoDecimals(kwhPerMonth * EMISSION_FACTORS.ELECTRICITY_KG_PER_KWH);
+}
+
+/**
+ * @description Calculates total monthly carbon emissions across transport, food, and electricity
+ * @param {number} transport - Weekly distance in km
+ * @param {string} foodHabit - The food habit category ('veg', 'mixed', 'non-veg')
+ * @param {number} electricity - Monthly electricity usage in kWh
+ * @returns {Object} Monthly CO2 emissions breakdown and total in kg
+ * @throws {Error} If inputs are invalid or negative
+ * @example
+ * calculateTotalEmissions(100, 'veg', 200) // => { transport: 90.93, food: 45, electricity: 164, total: 299.93 }
+ */
+export function calculateTotalEmissions(transport, foodHabit, electricity) {
+  const transportEmissions = calculateTransport(transport);
+  const foodEmissions = calculateFood(foodHabit);
+  const electricityEmissions = calculateElectricity(electricity);
   const total = roundToTwoDecimals(transportEmissions + foodEmissions + electricityEmissions);
 
   return {
@@ -76,29 +108,19 @@ export function calculateTotalEmissions(transport, foodHabit, electricity) {
 }
 
 /**
- * Calculates a Carbon Health Score between 0 and 100 based on monthly emissions (kg CO2/month).
- * Lower emissions result in a higher score.
- * 
- * - An emission total of 0 kg CO2/month yields a score of 100.
- * - An emission total of 500 kg CO2/month yields a score of 50.
- * - An emission total of 1000 kg CO2/month or more yields a score of 0.
- * 
+ * @description Calculates a Carbon Health Score between 0 and 100 based on monthly emissions (kg CO2/month). Lower emissions result in a higher score.
  * @param {number} totalEmissions - The total monthly emissions in kg CO2 (must be >= 0)
  * @returns {number} The carbon score from 0 (poor) to 100 (excellent)
- * @throws {Error} Throws an error if totalEmissions is not a non-negative number
- * 
+ * @throws {Error} If input is invalid or negative
  * @example
- * const score = calculateCarbonScore(300);
- * // Returns: 70
+ * calculateCarbonScore(300) // => 70
  */
 export function calculateCarbonScore(totalEmissions) {
-  if (typeof totalEmissions !== 'number' || isNaN(totalEmissions) || totalEmissions < 0) {
-    throw new Error('Total emissions must be a non-negative number.');
+  if (typeof totalEmissions !== 'number' || totalEmissions < MIN_SCORE || isNaN(totalEmissions)) {
+    throw new Error('Total emissions must be a non-negative number. Invalid input: must be a non-negative number');
   }
 
-  // Scale: 0 emissions = 100 score, 1000+ emissions = 0 score
-  const score = 100 - (totalEmissions / 10);
+  const score = MAX_SCORE - (totalEmissions / SCORE_DIVISOR);
   
-  // Bound score between 0 and 100, and round to nearest integer
-  return Math.max(0, Math.min(100, Math.round(score)));
+  return Math.max(MIN_SCORE, Math.min(MAX_SCORE, Math.round(score)));
 }

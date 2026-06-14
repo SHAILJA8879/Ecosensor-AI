@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useCallback, Suspense } from 'react';
+import PropTypes from 'prop-types';
 import ScoreGauge from './ScoreGauge';
 import { getHistory, getWeeklyData, getMonthlyData } from '../utils/historyStorage';
+import { SCORE_THRESHOLDS } from '../utils/constants';
 
 // Lazy load the charts for optimized client initial loading performance
 const ProgressChart = React.lazy(() =>
@@ -316,9 +318,9 @@ export default function Dashboard({ onNavigateToCalculator }) {
                     <span className="inline-flex items-center space-x-2">
                       <span 
                         className={`w-2 h-2 rounded-full ${
-                          item.carbonScore <= 40 
+                          item.carbonScore <= SCORE_THRESHOLDS.LOW 
                             ? 'bg-red-500' 
-                            : item.carbonScore <= 70 
+                            : item.carbonScore <= SCORE_THRESHOLDS.MEDIUM 
                               ? 'bg-amber-500' 
                               : 'bg-emerald-500'
                         }`}
@@ -375,9 +377,9 @@ export default function Dashboard({ onNavigateToCalculator }) {
                 <span className="inline-flex items-center space-x-1.5 text-sm font-bold text-white">
                   <span 
                     className={`w-2 h-2 rounded-full ${
-                      item.carbonScore <= 40 
+                      item.carbonScore <= SCORE_THRESHOLDS.LOW 
                         ? 'bg-red-500' 
-                        : item.carbonScore <= 70 
+                        : item.carbonScore <= SCORE_THRESHOLDS.MEDIUM 
                           ? 'bg-amber-500' 
                           : 'bg-emerald-500'
                     }`}
@@ -399,3 +401,10 @@ export default function Dashboard({ onNavigateToCalculator }) {
     </div>
   );
 }
+
+Dashboard.propTypes = {
+  onNavigateToCalculator: PropTypes.func.isRequired,
+};
+
+Dashboard.defaultProps = {};
+

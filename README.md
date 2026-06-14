@@ -1,6 +1,13 @@
-# EcoSense AI
+# EcoSense AI - Carbon Footprint Awareness Platform
 
-EcoSense AI is a modern full-stack application designed to leverage AI insights for environmental data monitoring, analysis, and sustainability recommendations.
+EcoSense AI is a full-stack sustainability application designed to help individuals understand, track, and reduce their carbon footprint through simple actions, automated utility bill scanning, and personalized AI suggestions.
+
+## How It Solves the Challenge
+
+EcoSense AI directly solves the sustainability tracking challenge by implementing a unified, three-step journey:
+1. **Understand**: Users manually enter travel, dietary, and power statistics, or scan physical utility bills using the built-in Gemini Vision OCR endpoint. The application immediately calculates their Carbon Health Score (0-100) and displays a detailed graphical breakdown of resource drivers.
+2. **Reduce**: Once calculated, the platform consults the AI Carbon Coach. Powered by Gemini 1.5 Flash, the coach generates personalized, context-aware savings actions, a 7-day green transition challenge, and estimates potential score improvements.
+3. **Track**: Users can switch to the tracking Dashboard to trace their score progress timeline (weekly/monthly scopes), view percentage splits, and review historical log archives.
 
 ## Tech Stack
 

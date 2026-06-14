@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * BillScanner component for EcoSense AI.
@@ -255,3 +256,10 @@ export default function BillScanner({ onScanSuccess }) {
     </div>
   );
 }
+
+BillScanner.propTypes = {
+  onScanSuccess: PropTypes.func.isRequired,
+};
+
+BillScanner.defaultProps = {};
+

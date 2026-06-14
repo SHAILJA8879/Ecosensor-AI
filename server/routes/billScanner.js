@@ -69,6 +69,26 @@ const validateBillScan = [
       if (!allowedMimeTypes.includes(req.file.mimetype)) {
         throw new Error('Invalid file type. Only JPEG, PNG, and WEBP images are accepted.');
       }
+
+      const buffer = req.file.buffer;
+      if (!buffer || buffer.length < 12) {
+        throw new Error('Invalid file buffer or file too small.');
+      }
+
+      if (req.file.mimetype === 'image/jpeg' || req.file.mimetype === 'image/jpg') {
+        if (buffer[0] !== 0xFF || buffer[1] !== 0xD8) {
+          throw new Error('File content does not match JPEG/JPG format.');
+        }
+      } else if (req.file.mimetype === 'image/png') {
+        if (buffer[0] !== 0x89 || buffer[1] !== 0x50) {
+          throw new Error('File content does not match PNG format.');
+        }
+      } else if (req.file.mimetype === 'image/webp') {
+        if (buffer.toString('ascii', 8, 12) !== 'WEBP') {
+          throw new Error('File content does not match WEBP format.');
+        }
+      }
+
       return true;
     }),
   (req, res, next) => {
@@ -85,10 +105,25 @@ const validateBillScan = [
 ];
 
 /**
- * Validates whether the extracted date matches the standard ISO YYYY-MM-DD format.
- * 
+ * @description Sanitizes response text by stripping script tags and other HTML tags
+ * @param {string} text - The raw response text
+ * @returns {string} The sanitized text
+ * @example
+ * sanitizeResponse('<script>alert(1)</script>hello') // => 'hello'
+ */
+const sanitizeResponse = (text) => {
+  return text
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .trim();
+};
+
+/**
+ * @description Validates whether the extracted date matches the standard ISO YYYY-MM-DD format.
  * @param {any} dateStr - The date string to validate
  * @returns {string|null} The validated date string in YYYY-MM-DD format or null
+ * @example
+ * sanitizeBillingDate('2026-06-15') // => '2026-06-15'
  */
 function sanitizeBillingDate(dateStr) {
   if (typeof dateStr !== 'string') {
@@ -108,10 +143,11 @@ function sanitizeBillingDate(dateStr) {
 }
 
 /**
- * Validates and sanitizes the extracted numeric utility values.
- * 
+ * @description Validates and sanitizes the extracted numeric utility values.
  * @param {any} val - The input value to sanitize
  * @returns {number|null} The parsed positive float or null
+ * @example
+ * sanitizeNumericVal(12.5) // => 12.5
  */
 function sanitizeNumericVal(val) {
   if (val === null || val === undefined) {
@@ -125,14 +161,12 @@ function sanitizeNumericVal(val) {
 }
 
 /**
- * POST /api/scan-bill
- * Route handler to upload a utility bill image and extract metrics using Gemini Vision.
- * 
- * @name post/scan-bill
- * @function
- * @inner
+ * @description POST /api/scan-bill
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
  */
-router.post('/scan-bill', scannerRateLimiter, uploadMiddleware, validateBillScan, async (req, res) => {
+router.post('/scan-bill', scannerRateLimiter, uploadMiddleware, validateBillScan, async function handleBillScan(req, res) {
   // 1. Validate Gemini API configurations
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
@@ -146,77 +180,79 @@ router.post('/scan-bill', scannerRateLimiter, uploadMiddleware, validateBillScan
   try {
     // Initialize Gemini SDK client
     const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
-        generationConfig: { responseMimeType: 'application/json' }
-      });
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-1.5-flash',
+      generationConfig: { responseMimeType: 'application/json' }
+    });
 
-      // Prepare image base64 structure
-      const imagePart = {
-        inlineData: {
-          data: req.file.buffer.toString('base64'),
-          mimeType: req.file.mimetype
-        }
-      };
-
-      // Prompt optimized for structure extraction
-      const prompt = `Analyze this utility bill. Extract the following properties and return them in a JSON object:
-      - "kwh": The total electricity consumption in kWh. Must be a number. If not found, return null.
-      - "fuel_liters": The total fuel/gas consumption in liters. Must be a number. If not found, return null.
-      - "billing_date": The billing date formatted as YYYY-MM-DD. If not found, return null.
-
-      Do not estimate or guess values. Return nulls if they are not explicitly or clearly readable on the bill.`;
-
-      // Call Gemini API
-      const result = await model.generateContent([prompt, imagePart]);
-      const response = await result.response;
-      const text = response.text();
-
-      // Parse and sanitize raw Gemini response
-      let parsedJson;
-      try {
-        parsedJson = JSON.parse(text);
-      } catch (e) {
-        console.error('Gemini malformed JSON response:', text);
-        return res.status(500).json({
-          success: false,
-          data: null,
-          message: 'The AI model returned an unparsable response. Please try again.'
-        });
+    // Prepare image base64 structure
+    const imagePart = {
+      inlineData: {
+        data: req.file.buffer.toString('base64'),
+        mimeType: req.file.mimetype
       }
+    };
 
-      // Sanitize properties to prevent script injections and type errors
-      const sanitizedData = {
-        kwh: sanitizeNumericVal(parsedJson.kwh),
-        fuel_liters: sanitizeNumericVal(parsedJson.fuel_liters),
-        billing_date: sanitizeBillingDate(parsedJson.billing_date)
-      };
+    // Prompt optimized for structure extraction
+    const prompt = `Analyze this utility bill. Extract the following properties and return them in a JSON object:
+    - "kwh": The total electricity consumption in kWh. Must be a number. If not found, return null.
+    - "fuel_liters": The total fuel/gas consumption in liters. Must be a number. If not found, return null.
+    - "billing_date": The billing date formatted as YYYY-MM-DD. If not found, return null.
 
-      return res.status(200).json({
-        success: true,
-        data: sanitizedData,
-        message: 'Bill successfully scanned and parsed.'
-      });
+    Do not estimate or guess values. Return nulls if they are not explicitly or clearly readable on the bill.`;
 
-    } catch (apiError) {
-      console.error('Gemini API Integration Error:', apiError.message);
+    // Call Gemini API
+    const result = await model.generateContent([prompt, imagePart]);
+    const response = await result.response;
+    const text = response.text();
 
-      // Handle Rate Limit (429) errors
-      if (apiError.message.includes('429') || apiError.message.includes('RESOURCE_EXHAUSTED')) {
-        return res.status(429).json({
-          success: false,
-          data: null,
-          message: 'The AI service is currently overloaded. Please try again in a moment.'
-        });
-      }
+    const sanitizedText = sanitizeResponse(text);
 
-      // Handle other API validation/service errors
+    // Parse and sanitize raw Gemini response
+    let parsedJson;
+    try {
+      parsedJson = JSON.parse(sanitizedText);
+    } catch (e) {
+      console.error('Gemini malformed JSON response:', text);
       return res.status(500).json({
         success: false,
         data: null,
-        message: 'An error occurred while communicating with the AI scanning service.'
+        message: 'The AI model returned an unparsable response. Please try again.'
       });
     }
+
+    // Sanitize properties to prevent script injections and type errors
+    const sanitizedData = {
+      kwh: sanitizeNumericVal(parsedJson.kwh),
+      fuel_liters: sanitizeNumericVal(parsedJson.fuel_liters),
+      billing_date: sanitizeBillingDate(parsedJson.billing_date)
+    };
+
+    return res.status(200).json({
+      success: true,
+      data: sanitizedData,
+      message: 'Bill successfully scanned and parsed.'
+    });
+
+  } catch (apiError) {
+    console.error('Gemini API Integration Error:', apiError.message);
+
+    // Handle Rate Limit (429) errors
+    if (apiError.message.includes('429') || apiError.message.includes('RESOURCE_EXHAUSTED')) {
+      return res.status(429).json({
+        success: false,
+        data: null,
+        message: 'The AI service is currently overloaded. Please try again in a moment.'
+      });
+    }
+
+    // Handle other API validation/service errors
+    return res.status(500).json({
+      success: false,
+      data: null,
+      message: 'An error occurred while communicating with the AI scanning service.'
+    });
+  }
 });
 
 module.exports = router;

@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { calculateTotalEmissions, calculateCarbonScore } from '../utils/carbonCalculator';
 
 /**
@@ -282,3 +283,17 @@ export default function Calculator({ onCalculate, prefilledValues }) {
     </div>
   );
 }
+
+Calculator.propTypes = {
+  onCalculate: PropTypes.func.isRequired,
+  prefilledValues: PropTypes.shape({
+    transport: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    electricity: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    foodHabit: PropTypes.string,
+  }),
+};
+
+Calculator.defaultProps = {
+  prefilledValues: null,
+};
+

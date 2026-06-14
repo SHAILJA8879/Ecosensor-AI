@@ -7,7 +7,7 @@ describe('App Component', () => {
     
     // Check if the welcome heading renders
     const headingElement = screen.getByRole('heading', { 
-      name: /carbon footprint dashboard/i 
+      name: /understand and reduce your carbon footprint/i 
     });
     expect(headingElement).toBeInTheDocument();
 

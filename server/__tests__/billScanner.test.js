@@ -17,6 +17,8 @@ jest.mock('@google/generative-ai', () => {
 
 const { _generateContentMock } = require('@google/generative-ai');
 
+const dummyJpgBuffer = Buffer.from([0xFF, 0xD8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
+
 describe('BillScanner Component / POST /api/scan-bill API', () => {
   beforeEach(() => {
     process.env.GEMINI_API_KEY = 'mock-valid-api-key';
@@ -69,7 +71,7 @@ describe('BillScanner Component / POST /api/scan-bill API', () => {
 
     const res = await request(app)
       .post('/api/scan-bill')
-      .attach('bill', Buffer.from('fake-image-data'), 'bill.jpg')
+      .attach('bill', dummyJpgBuffer, 'bill.jpg')
       .expect(200);
 
     expect(res.body.success).toBe(true);
@@ -83,7 +85,7 @@ describe('BillScanner Component / POST /api/scan-bill API', () => {
 
     const res = await request(app)
       .post('/api/scan-bill')
-      .attach('bill', Buffer.from('fake-image-data'), 'bill.jpg')
+      .attach('bill', dummyJpgBuffer, 'bill.jpg')
       .expect(500);
 
     expect(res.body.success).toBe(false);
@@ -99,7 +101,7 @@ describe('BillScanner Component / POST /api/scan-bill API', () => {
 
     const res = await request(app)
       .post('/api/scan-bill')
-      .attach('bill', Buffer.from('fake-image-data'), 'bill.jpg')
+      .attach('bill', dummyJpgBuffer, 'bill.jpg')
       .expect(500);
 
     expect(res.body.success).toBe(false);
@@ -111,7 +113,7 @@ describe('BillScanner Component / POST /api/scan-bill API', () => {
 
     const res = await request(app)
       .post('/api/scan-bill')
-      .attach('bill', Buffer.from('fake-image-data'), 'bill.jpg')
+      .attach('bill', dummyJpgBuffer, 'bill.jpg')
       .expect(429);
 
     expect(res.body.success).toBe(false);

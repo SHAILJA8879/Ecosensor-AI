@@ -1,5 +1,7 @@
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import PropTypes from 'prop-types';
+import { SCORE_THRESHOLDS } from '../utils/constants';
 
 // Register Chart.js elements
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -21,12 +23,12 @@ export default function ScoreGauge({ score }) {
   let textColor = 'text-emerald-400';
   let textDescription = 'Great job! Your carbon footprint is well below critical limits.';
 
-  if (score <= 40) {
+  if (score <= SCORE_THRESHOLDS.LOW) {
     color = '#ef4444'; // Red (Poor)
     textColor = 'text-red-400';
     label = 'Poor';
     textDescription = 'Your carbon emissions are very high. Consider carbon reduction strategies.';
-  } else if (score <= 70) {
+  } else if (score <= SCORE_THRESHOLDS.MEDIUM) {
     color = '#f59e0b'; // Yellow/Amber (Moderate)
     textColor = 'text-amber-400';
     label = 'Moderate';
@@ -89,3 +91,10 @@ export default function ScoreGauge({ score }) {
     </div>
   );
 }
+
+ScoreGauge.propTypes = {
+  score: PropTypes.number.isRequired,
+};
+
+ScoreGauge.defaultProps = {};
+

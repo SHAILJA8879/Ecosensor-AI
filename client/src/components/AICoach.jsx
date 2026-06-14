@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import ScoreGauge from './ScoreGauge';
+import { STORAGE_KEYS } from '../utils/constants';
 
 /**
  * @typedef {Object} Recommendation
@@ -58,7 +60,7 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
   // Load checked days progress from localStorage when the plan loads
   useEffect(() => {
     if (plan?.sevenDayChallenge?.title) {
-      const storageKey = `ecoSenseAICoachChallenge-${plan.sevenDayChallenge.title.replace(/\s+/g, '_')}`;
+      const storageKey = `${STORAGE_KEYS.CHALLENGE}-${plan.sevenDayChallenge.title.replace(/\s+/g, '_')}`;
       try {
         const saved = localStorage.getItem(storageKey);
         setCheckedDays(saved ? JSON.parse(saved) : {});
@@ -72,7 +74,7 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
   const handleCheckDay = useCallback((dayNum, isChecked) => {
     if (!plan?.sevenDayChallenge?.title) return;
     
-    const storageKey = `ecoSenseAICoachChallenge-${plan.sevenDayChallenge.title.replace(/\s+/g, '_')}`;
+    const storageKey = `${STORAGE_KEYS.CHALLENGE}-${plan.sevenDayChallenge.title.replace(/\s+/g, '_')}`;
     setCheckedDays((prev) => {
       const updated = { ...prev, [dayNum]: isChecked };
       try {
@@ -377,3 +379,24 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
     </div>
   );
 }
+
+AICoach.propTypes = {
+  score: PropTypes.number.isRequired,
+  breakdown: PropTypes.shape({
+    transport: PropTypes.number,
+    food: PropTypes.number,
+    electricity: PropTypes.number,
+    total: PropTypes.number
+  }).isRequired,
+  rawInputs: PropTypes.shape({
+    transport: PropTypes.number,
+    foodHabit: PropTypes.string,
+    electricity: PropTypes.number
+  }).isRequired,
+  onPlanGenerated: PropTypes.func
+};
+
+AICoach.defaultProps = {
+  onPlanGenerated: () => {},
+};
+

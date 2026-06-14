@@ -1,4 +1,5 @@
 import { Line, Doughnut } from 'react-chartjs-2';
+import PropTypes from 'prop-types';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,7 +13,6 @@ import {
   Filler
 } from 'chart.js';
 
-// Register core Chart.js elements
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -36,7 +36,6 @@ ChartJS.register(
 export function ProgressChart({ historyData }) {
   const chartData = {
     labels: historyData.map((item) => {
-      // Format YYYY-MM-DD to short display string e.g. "Jun 12"
       const dateParts = item.date.split('-');
       if (dateParts.length === 3) {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -49,13 +48,13 @@ export function ProgressChart({ historyData }) {
       {
         label: 'Carbon Health Score',
         data: historyData.map((item) => item.carbonScore),
-        borderColor: '#10b981', // emerald-500
+        borderColor: '#10b981',
         backgroundColor: 'rgba(16, 185, 129, 0.08)',
         fill: true,
         tension: 0.35,
         pointBackgroundColor: '#10b981',
         pointHoverBackgroundColor: '#fff',
-        pointBorderColor: '#0f172a', // slate-900
+        pointBorderColor: '#0f172a',
         pointHoverBorderColor: '#10b981',
         pointRadius: 4,
         pointHoverRadius: 6,
@@ -104,6 +103,15 @@ export function ProgressChart({ historyData }) {
   );
 }
 
+ProgressChart.propTypes = {
+  historyData: PropTypes.arrayOf(PropTypes.shape({
+    date: PropTypes.string.isRequired,
+    carbonScore: PropTypes.number.isRequired,
+  })).isRequired,
+};
+
+ProgressChart.defaultProps = {};
+
 /**
  * Doughnut Chart rendering emission categories (Transport vs Food vs Electricity) of the latest entry.
  * 
@@ -119,9 +127,9 @@ export function CategoryChart({ latestEntry }) {
       {
         data: [latestEntry.transport, latestEntry.food, latestEntry.electricity],
         backgroundColor: [
-          '#f59e0b', // Amber (Transport)
-          '#10b981', // Emerald (Food)
-          '#06b6d4'  // Cyan (Electricity)
+          '#f59e0b',
+          '#10b981',
+          '#06b6d4'
         ],
         hoverBackgroundColor: [
           '#d97706',
@@ -159,3 +167,13 @@ export function CategoryChart({ latestEntry }) {
     </div>
   );
 }
+
+CategoryChart.propTypes = {
+  latestEntry: PropTypes.shape({
+    transport: PropTypes.number.isRequired,
+    food: PropTypes.number.isRequired,
+    electricity: PropTypes.number.isRequired,
+  }).isRequired,
+};
+
+CategoryChart.defaultProps = {};

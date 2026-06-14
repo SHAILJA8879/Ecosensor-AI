@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'ecosense_history';
+import { STORAGE_KEYS } from './constants';
 
 /**
  * @typedef {Object} HistoryEntry
@@ -12,22 +12,12 @@ const STORAGE_KEY = 'ecosense_history';
  */
 
 /**
- * Saves or updates a carbon footprint entry in localStorage.
- * Overwrites existing entry if one already exists for the same date.
- * 
+ * @description Saves or updates a carbon footprint entry in localStorage. Overwrites existing entry if one already exists for the same date.
  * @param {HistoryEntry} entry - The entry data to save
  * @returns {boolean} True if successfully saved, false otherwise
- * 
+ * @throws {Error} If localStorage fails to write
  * @example
- * saveEntry({
- *   date: '2026-06-12',
- *   carbonScore: 82,
- *   transport: 90.93,
- *   food: 45,
- *   electricity: 164,
- *   total: 299.93,
- *   predictedScore: 88
- * });
+ * saveEntry({ date: '2026-06-12', carbonScore: 82, transport: 90.93, food: 45, electricity: 164, total: 299.93 }) // => true
  */
 export function saveEntry(entry) {
   try {
@@ -39,16 +29,14 @@ export function saveEntry(entry) {
     const existingIndex = history.findIndex((item) => item.date === entry.date);
 
     if (existingIndex > -1) {
-      // Overwrite / merge existing entry for the same date
       history[existingIndex] = { ...history[existingIndex], ...entry };
     } else {
       history.push(entry);
     }
 
-    // Keep history sorted by date, newest first
     history.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history));
     return true;
   } catch (error) {
     console.error('Error writing to history storage:', error);
@@ -57,32 +45,34 @@ export function saveEntry(entry) {
 }
 
 /**
- * Fetches the full carbon footprint history from localStorage.
- * Entries are returned sorted by date, newest first.
- * 
+ * @description Fetches the full carbon footprint history from localStorage. Entries are returned sorted by date, newest first.
  * @returns {HistoryEntry[]} Array of history entries, sorted by date (newest first)
+ * @throws {Error} If localStorage fails to read
+ * @example
+ * getHistory() // => [{ date: '2026-06-12', carbonScore: 82, ... }]
  */
 export function getHistory() {
   try {
-    const rawData = localStorage.getItem(STORAGE_KEY);
+    const rawData = localStorage.getItem(STORAGE_KEYS.HISTORY);
     if (!rawData) {
       return [];
     }
 
     const parsed = JSON.parse(rawData);
     if (!Array.isArray(parsed)) {
-      // Clear corrupt non-array data
-      localStorage.removeItem(STORAGE_KEY);
+      try {
+        localStorage.removeItem(STORAGE_KEYS.HISTORY);
+      } catch (removeError) {
+        console.error('Error removing corrupted history:', removeError);
+      }
       return [];
     }
 
-    // Return sorted newest first
     return parsed.sort((a, b) => new Date(b.date) - new Date(a.date));
   } catch (error) {
     console.error('Error reading history from storage:', error);
-    // Clear corrupted localStorage to heal the system state
     try {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEYS.HISTORY);
     } catch {
       // Ignore inner localStorage failures
     }
@@ -91,38 +81,37 @@ export function getHistory() {
 }
 
 /**
- * Retrieves up to the last 7 entries for weekly progress tracking.
- * Entries are sorted chronologically (oldest first) for left-to-right timeline charts.
- * 
+ * @description Retrieves up to the last 7 entries for weekly progress tracking. Entries are sorted chronologically (oldest first).
  * @returns {HistoryEntry[]} Last 7 entries sorted oldest first
+ * @example
+ * getWeeklyData() // => [{ date: '2026-06-06', carbonScore: 75, ... }]
  */
 export function getWeeklyData() {
   const history = getHistory();
-  // Slice the 7 most recent entries, then reverse to sort chronologically (oldest first)
   return history.slice(0, 7).reverse();
 }
 
 /**
- * Retrieves up to the last 30 entries for monthly progress tracking.
- * Entries are sorted chronologically (oldest first) for left-to-right timeline charts.
- * 
+ * @description Retrieves up to the last 30 entries for monthly progress tracking. Entries are sorted chronologically (oldest first).
  * @returns {HistoryEntry[]} Last 30 entries sorted oldest first
+ * @example
+ * getMonthlyData() // => [{ date: '2026-05-15', carbonScore: 80, ... }]
  */
 export function getMonthlyData() {
   const history = getHistory();
-  // Slice the 30 most recent entries, then reverse to sort chronologically (oldest first)
   return history.slice(0, 30).reverse();
 }
 
 /**
- * Clears all carbon footprint history entries from localStorage.
- * Useful for debugging, system reset, and testing environments.
- * 
+ * @description Clears all carbon footprint history entries from localStorage.
  * @returns {boolean} True if successfully cleared, false otherwise
+ * @throws {Error} If localStorage fails to clear
+ * @example
+ * clearHistory() // => true
  */
 export function clearHistory() {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEYS.HISTORY);
     return true;
   } catch (error) {
     console.error('Error clearing history storage:', error);

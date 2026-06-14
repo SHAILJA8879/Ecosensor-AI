@@ -56,29 +56,43 @@ const validateCoachRequest = [
 ];
 
 /**
- * Invokes the Gemini API and parses the returned JSON string.
- * 
+ * @description Sanitizes response text by stripping script tags and other HTML tags
+ * @param {string} text - The raw response text
+ * @returns {string} The sanitized text
+ * @example
+ * sanitizeResponse('<script>alert(1)</script>hello') // => 'hello'
+ */
+const sanitizeResponse = (text) => {
+  return text
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .trim();
+};
+
+/**
+ * @description Invokes the Gemini API, sanitizes, and parses the returned JSON string.
  * @param {Object} model - The initialized Google Generative AI model
  * @param {string} prompt - The constructed input prompt
  * @returns {Promise<Object>} The parsed JSON data from Gemini
  * @throws {Error} Throws parsing or API execution errors
+ * @example
+ * callGemini(model, prompt) // => parsedObject
  */
 async function callGemini(model, prompt) {
   const result = await model.generateContent(prompt);
   const response = await result.response;
   const text = response.text();
-  return JSON.parse(text);
+  const sanitizedText = sanitizeResponse(text);
+  return JSON.parse(sanitizedText);
 }
 
 /**
- * POST /api/carbon-coach
- * Route handler that invokes Gemini to generate an action plan based on user metrics.
- * 
- * @name post/carbon-coach
- * @function
- * @inner
+ * @description POST /api/carbon-coach
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
  */
-router.post('/carbon-coach', coachRateLimiter, validateCoachRequest, async (req, res) => {
+router.post('/carbon-coach', coachRateLimiter, validateCoachRequest, async function handleCarbonCoach(req, res) {
   const { carbonScore, transport, food, electricity, history = [] } = req.body;
   
   const apiKey = process.env.GEMINI_API_KEY;
