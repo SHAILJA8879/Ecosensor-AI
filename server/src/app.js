@@ -25,13 +25,13 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "blob:"],
+      imgSrc: ["'self'", 'data:', 'blob:'],
       connectSrc: ["'self'"],
     },
   },
   crossOriginEmbedderPolicy: true,
   crossOriginOpenerPolicy: true,
-  crossOriginResourcePolicy: { policy: "same-site" },
+  crossOriginResourcePolicy: { policy: 'same-site' },
 }));
 
 // Strict CORS Configuration (No wildcard)
