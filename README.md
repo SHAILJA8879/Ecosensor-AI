@@ -121,28 +121,37 @@ ecosense-ai/
 └── README.md
 
 
-🔒 Security
+## 🔒 Security Implementation
+
+- **Helmet.js** — HTTP security headers with 
+  strict CSP
+- **Rate Limiting** — 10 requests/15min per IP
+- **Slow Down** — Progressive delays on 
+  rapid requests
+- **express-validator** — Input validation 
+  and sanitization
+- **Magic Byte Validation** — File type verified 
+  at binary level (not just mimetype)
+- **Environment Variables** — Zero hardcoded 
+  secrets
+- **CORS** — Restricted to allowed origins only
+- **Request ID** — UUID tracing on every request
+
+---
 
 
-All API keys stored in environment variables (never hardcoded)
-Helmet.js for HTTP security headers
-Rate limiting on all AI endpoints (10 requests/15 min)
-Input validation and sanitization via express-validator
-File upload validation (type + size limits)
-CORS configured for production domains only
 
+## ♿ Accessibility (WCAG AA Compliant)
 
-
-♿ Accessibility
-
-
-WCAG AA compliant color contrast (4.5:1 ratio)
-Full keyboard navigation support
-aria-labels on all interactive elements
-aria-live regions for dynamic content updates
-Skip navigation link
-Semantic HTML throughout
-Screen reader compatible charts with text alternatives
+- Color contrast ratio 4.5:1 minimum
+- Full keyboard navigation
+- aria-labels on all interactive elements
+- aria-live regions for dynamic updates
+- Skip navigation link
+- Semantic HTML (main, nav, header, section)
+- Screen reader compatible charts with 
+  text alternatives
+- Error announcements via aria role="alert"
 
 
 
