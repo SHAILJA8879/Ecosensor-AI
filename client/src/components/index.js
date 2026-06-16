@@ -4,3 +4,7 @@ export { default as AICoach } from './AICoach';
 export { default as Dashboard } from './Dashboard';
 export { default as ScoreGauge } from './ScoreGauge';
 export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as Header } from './layout/Header';
+export { default as HeroSection } from './layout/HeroSection';
+export { default as OnboardingSteps } from './layout/OnboardingSteps';
+export { default as Footer } from './layout/Footer';

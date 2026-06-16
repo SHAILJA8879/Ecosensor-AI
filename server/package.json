@@ -7,7 +7,9 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "test": "jest --passWithNoTests",
-    "lint": "eslint src"
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src",
+    "format": "prettier --write \"src/**/*.js\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.13.0",
@@ -18,8 +20,7 @@
     "express-slow-down": "^3.1.0",
     "express-validator": "^7.3.2",
     "helmet": "^7.1.0",
-    "multer": "^2.1.1",
-    "uuid": "^9.0.1"
+    "multer": "^2.1.1"
   },
   "devDependencies": {
     "eslint": "^9.4.0",

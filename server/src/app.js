@@ -7,38 +7,41 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
-const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
 
 const app = express();
 
 // Request ID middleware for tracing
 app.use((req, res, next) => {
-  req.id = uuidv4();
+  req.id = crypto.randomUUID();
   res.setHeader('X-Request-ID', req.id);
   next();
 });
 
 // Strengthen Helmet configuration
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", 'data:', 'blob:'],
-      connectSrc: ["'self'"],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'blob:'],
+        connectSrc: ["'self'", "http://localhost:5173", "ws://localhost:5173"]
+      }
     },
-  },
-  crossOriginEmbedderPolicy: true,
-  crossOriginOpenerPolicy: true,
-  crossOriginResourcePolicy: { policy: 'same-site' },
-}));
+    crossOriginEmbedderPolicy: true,
+    crossOriginOpenerPolicy: true,
+    crossOriginResourcePolicy: { policy: 'same-site' }
+  })
+);
 
 // Strict CORS Configuration (No wildcard)
 const corsOptions = {
   origin: process.env.ALLOWED_ORIGIN || 'http://localhost:5173',
   methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
+  allowedHeaders: ['Content-Type']
 };
 app.use(cors(corsOptions));
 
@@ -46,7 +49,7 @@ app.use(cors(corsOptions));
 const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000,
   delayAfter: 5,
-  delayMs: 500
+  delayMs: () => 500
 });
 
 // Global API rate limiting: Limit each IP to 100 requests per 15 minutes
@@ -71,8 +74,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API Routes
-const billScannerRouter = require('../routes/billScanner');
-const carbonCoachRouter = require('../routes/carbonCoach');
+const billScannerRouter = require('./routes/billScanner');
+const carbonCoachRouter = require('./routes/carbonCoach');
 app.use('/api', billScannerRouter);
 app.use('/api', carbonCoachRouter);
 
@@ -85,10 +88,9 @@ app.use('/api', carbonCoachRouter);
  * GET /.well-known/security.txt
  */
 app.get('/.well-known/security.txt', (req, res) => {
-  res.type('text').send(
-    'Contact: mailto:security@ecosense-ai.app\n' +
-    'Expires: 2026-12-31T00:00:00.000Z\n'
-  );
+  res
+    .type('text')
+    .send('Contact: mailto:security@ecosense-ai.app\n' + 'Expires: 2026-12-31T00:00:00.000Z\n');
 });
 
 /**

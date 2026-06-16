@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Dashboard from '../components/Dashboard';
 import { getHistory, getWeeklyData, getMonthlyData } from '../utils/historyStorage';
@@ -7,6 +8,14 @@ jest.mock('../utils/historyStorage', () => ({
   getHistory: jest.fn(),
   getWeeklyData: jest.fn(),
   getMonthlyData: jest.fn()
+}));
+
+// Mock ScoreGauge component
+jest.mock('../components/ScoreGauge', () => ({
+  __esModule: true,
+  default: function MockScoreGauge(props) {
+    return <div data-testid="mock-score-gauge">Score: {props.score}</div>;
+  }
 }));
 
 // Mock react-chartjs-2 to avoid JSDOM canvas failures
@@ -72,7 +81,7 @@ describe('Dashboard', () => {
     render(<Dashboard onNavigateToCalculator={onNavigateToCalculatorMock} />);
 
     // Validate score display (from ScoreGauge)
-    expect(screen.getByText('85')).toBeInTheDocument();
+    expect(screen.getByText('Score: 85')).toBeInTheDocument();
 
     // Validate trend arrow badge (+5 pts)
     expect(screen.getByText('+5 pts')).toBeInTheDocument();

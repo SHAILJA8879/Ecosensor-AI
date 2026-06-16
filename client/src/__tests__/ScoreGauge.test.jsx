@@ -6,13 +6,13 @@ jest.mock('react-chartjs-2', () => ({
   Doughnut: () => <div data-testid="mock-doughnut" />
 }));
 
-describe('ScoreGauge', () => {
+describe('ScoreGauge Component', () => {
   it('should display score value correctly when score is rendered', () => {
     render(<ScoreGauge score={85} />);
 
     // Check if the score is printed as text
     expect(screen.getByText('85')).toBeInTheDocument();
-    
+
     // Check if the rating label is present
     expect(screen.getByText('Excellent')).toBeInTheDocument();
   });
@@ -22,7 +22,7 @@ describe('ScoreGauge', () => {
 
     const labelElement = screen.getByText('Poor');
     expect(labelElement).toBeInTheDocument();
-    
+
     // Validate text color class matches red rating
     expect(labelElement).toHaveClass('text-red-400');
     expect(screen.getByText(/your carbon emissions are very high/i)).toBeInTheDocument();
@@ -33,7 +33,7 @@ describe('ScoreGauge', () => {
 
     const labelElement = screen.getByText('Moderate');
     expect(labelElement).toBeInTheDocument();
-    
+
     // Validate text color class matches yellow/amber rating
     expect(labelElement).toHaveClass('text-amber-400');
     expect(screen.getByText(/your carbon emissions are average/i)).toBeInTheDocument();
@@ -44,7 +44,7 @@ describe('ScoreGauge', () => {
 
     const labelElement = screen.getByText('Excellent');
     expect(labelElement).toBeInTheDocument();
-    
+
     // Validate text color class matches green rating
     expect(labelElement).toHaveClass('text-emerald-400');
     expect(screen.getByText(/great job/i)).toBeInTheDocument();

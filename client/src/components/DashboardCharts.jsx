@@ -27,7 +27,7 @@ ChartJS.register(
 
 /**
  * Line Chart rendering score progress over time.
- * 
+ *
  * @component
  * @param {Object} props - Component props
  * @param {Object[]} props.historyData - Sorted chronological array of history entries
@@ -38,7 +38,20 @@ export function ProgressChart({ historyData }) {
     labels: historyData.map((item) => {
       const dateParts = item.date.split('-');
       if (dateParts.length === 3) {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const months = [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec'
+        ];
         const mIndex = parseInt(dateParts[1], 10) - 1;
         return `${months[mIndex]} ${parseInt(dateParts[2], 10)}`;
       }
@@ -104,17 +117,19 @@ export function ProgressChart({ historyData }) {
 }
 
 ProgressChart.propTypes = {
-  historyData: PropTypes.arrayOf(PropTypes.shape({
-    date: PropTypes.string.isRequired,
-    carbonScore: PropTypes.number.isRequired,
-  })).isRequired,
+  historyData: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      carbonScore: PropTypes.number.isRequired
+    })
+  ).isRequired
 };
 
 ProgressChart.defaultProps = {};
 
 /**
  * Doughnut Chart rendering emission categories (Transport vs Food vs Electricity) of the latest entry.
- * 
+ *
  * @component
  * @param {Object} props - Component props
  * @param {Object} props.latestEntry - The most recent history entry
@@ -126,16 +141,8 @@ export function CategoryChart({ latestEntry }) {
     datasets: [
       {
         data: [latestEntry.transport, latestEntry.food, latestEntry.electricity],
-        backgroundColor: [
-          '#f59e0b',
-          '#10b981',
-          '#06b6d4'
-        ],
-        hoverBackgroundColor: [
-          '#d97706',
-          '#059669',
-          '#0891b2'
-        ],
+        backgroundColor: ['#f59e0b', '#10b981', '#06b6d4'],
+        hoverBackgroundColor: ['#d97706', '#059669', '#0891b2'],
         borderWidth: 0,
         weight: 1
       }
@@ -172,8 +179,8 @@ CategoryChart.propTypes = {
   latestEntry: PropTypes.shape({
     transport: PropTypes.number.isRequired,
     food: PropTypes.number.isRequired,
-    electricity: PropTypes.number.isRequired,
-  }).isRequired,
+    electricity: PropTypes.number.isRequired
+  }).isRequired
 };
 
 CategoryChart.defaultProps = {};

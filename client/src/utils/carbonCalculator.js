@@ -40,7 +40,9 @@ function roundToTwoDecimals(num) {
  */
 export function calculateTransport(kmPerWeek) {
   if (typeof kmPerWeek !== 'number' || kmPerWeek < MIN_SCORE || isNaN(kmPerWeek)) {
-    throw new Error('Transport distance must be a non-negative number. Invalid input: must be a non-negative number');
+    throw new Error(
+      'Transport distance must be a non-negative number. Invalid input: must be a non-negative number'
+    );
   }
 
   return roundToTwoDecimals(kmPerWeek * WEEKS_PER_MONTH * EMISSION_FACTORS.TRANSPORT_KG_PER_KM);
@@ -77,7 +79,9 @@ export function calculateFood(foodHabit) {
  */
 export function calculateElectricity(kwhPerMonth) {
   if (typeof kwhPerMonth !== 'number' || kwhPerMonth < MIN_SCORE || isNaN(kwhPerMonth)) {
-    throw new Error('Electricity usage must be a non-negative number. Invalid input: must be a non-negative number');
+    throw new Error(
+      'Electricity usage must be a non-negative number. Invalid input: must be a non-negative number'
+    );
   }
 
   return roundToTwoDecimals(kwhPerMonth * EMISSION_FACTORS.ELECTRICITY_KG_PER_KWH);
@@ -117,10 +121,12 @@ export function calculateTotalEmissions(transport, foodHabit, electricity) {
  */
 export function calculateCarbonScore(totalEmissions) {
   if (typeof totalEmissions !== 'number' || totalEmissions < MIN_SCORE || isNaN(totalEmissions)) {
-    throw new Error('Total emissions must be a non-negative number. Invalid input: must be a non-negative number');
+    throw new Error(
+      'Total emissions must be a non-negative number. Invalid input: must be a non-negative number'
+    );
   }
 
-  const score = MAX_SCORE - (totalEmissions / SCORE_DIVISOR);
-  
+  const score = MAX_SCORE - totalEmissions / SCORE_DIVISOR;
+
   return Math.max(MIN_SCORE, Math.min(MAX_SCORE, Math.round(score)));
 }

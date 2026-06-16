@@ -1,7 +1,6 @@
 import { calculateTotalEmissions, calculateCarbonScore } from '../utils/carbonCalculator';
 
 describe('Carbon Footprint Calculator Utility', () => {
-  
   // 1. Food Type: Vegetarian
   test('should correctly calculate emissions for vegetarian food habit', () => {
     const transport = 100; // km/week
@@ -47,10 +46,10 @@ describe('Carbon Footprint Calculator Utility', () => {
     // Food: 5.0 * 30 = 150.00
     // Electricity: 300 * 0.82 = 246.00
     // Total: 136.40 + 150 + 246 = 532.40
-    expect(result.transport).toBeCloseTo(136.40, 2);
+    expect(result.transport).toBeCloseTo(136.4, 2);
     expect(result.food).toBe(150);
     expect(result.electricity).toBe(246);
-    expect(result.total).toBeCloseTo(532.40, 2);
+    expect(result.total).toBeCloseTo(532.4, 2);
   });
 
   // 4. Edge Cases: Zero values
@@ -100,7 +99,9 @@ describe('Carbon Footprint Calculator Utility', () => {
 
   // 10. Carbon Score Validation Check
   test('should throw an error if emissions parameters are invalid in score calculator', () => {
-    expect(() => calculateCarbonScore(-1)).toThrow('Total emissions must be a non-negative number.');
+    expect(() => calculateCarbonScore(-1)).toThrow(
+      'Total emissions must be a non-negative number.'
+    );
     expect(() => calculateCarbonScore('500')).toThrow();
     expect(() => calculateCarbonScore(NaN)).toThrow();
   });

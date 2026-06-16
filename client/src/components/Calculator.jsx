@@ -5,7 +5,7 @@ import { calculateTotalEmissions, calculateCarbonScore } from '../utils/carbonCa
 /**
  * Calculator component for EcoSense AI.
  * Renders a validated, accessible carbon footprint input form.
- * 
+ *
  * @component
  * @param {Object} props - Component props
  * @param {function} props.onCalculate - Callback function triggered after calculations succeed
@@ -57,7 +57,7 @@ export default function Calculator({ onCalculate, prefilledValues }) {
 
   const handleChange = useCallback((field, value) => {
     setValues((prev) => ({ ...prev, [field]: value }));
-    
+
     // Clear error message when the user starts typing/correcting
     if (value !== '') {
       setErrors((prev) => ({ ...prev, [field]: '' }));
@@ -102,50 +102,53 @@ export default function Calculator({ onCalculate, prefilledValues }) {
     return isValid;
   }, [values]);
 
-  const handleSubmit = useCallback((e) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
 
-    if (!validateForm()) {
-      setAnnouncement('Calculation failed. Please check the inline error messages.');
-      return;
-    }
-
-    setIsLoading(true);
-    setAnnouncement('Calculating your carbon footprint emissions...');
-
-    // Simulate standard computation delay for polished micro-interaction experience
-    setTimeout(() => {
-      try {
-        const transportVal = parseFloat(values.transport);
-        const electricityVal = parseFloat(values.electricity);
-        
-        const emissionBreakdown = calculateTotalEmissions(
-          transportVal,
-          values.foodHabit,
-          electricityVal
-        );
-        const score = calculateCarbonScore(emissionBreakdown.total);
-
-        setAnnouncement('Emissions calculation successfully updated.');
-        
-        if (onCalculate) {
-          onCalculate({
-            breakdown: emissionBreakdown,
-            score,
-            rawInputs: {
-              transport: transportVal,
-              foodHabit: values.foodHabit,
-              electricity: electricityVal
-            }
-          });
-        }
-      } catch (err) {
-        setAnnouncement(`Error calculating emissions: ${err.message}`);
-      } finally {
-        setIsLoading(false);
+      if (!validateForm()) {
+        setAnnouncement('Calculation failed. Please check the inline error messages.');
+        return;
       }
-    }, 600);
-  }, [values, validateForm, onCalculate]);
+
+      setIsLoading(true);
+      setAnnouncement('Calculating your carbon footprint emissions...');
+
+      // Simulate standard computation delay for polished micro-interaction experience
+      setTimeout(() => {
+        try {
+          const transportVal = parseFloat(values.transport);
+          const electricityVal = parseFloat(values.electricity);
+
+          const emissionBreakdown = calculateTotalEmissions(
+            transportVal,
+            values.foodHabit,
+            electricityVal
+          );
+          const score = calculateCarbonScore(emissionBreakdown.total);
+
+          setAnnouncement('Emissions calculation successfully updated.');
+
+          if (onCalculate) {
+            onCalculate({
+              breakdown: emissionBreakdown,
+              score,
+              rawInputs: {
+                transport: transportVal,
+                foodHabit: values.foodHabit,
+                electricity: electricityVal
+              }
+            });
+          }
+        } catch (err) {
+          setAnnouncement(`Error calculating emissions: ${err.message}`);
+        } finally {
+          setIsLoading(false);
+        }
+      }, 600);
+    },
+    [values, validateForm, onCalculate]
+  );
 
   return (
     <div className="w-full bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 md:p-8 backdrop-blur-sm shadow-xl">
@@ -160,7 +163,8 @@ export default function Calculator({ onCalculate, prefilledValues }) {
             Calculate Your Emissions
           </legend>
           <p className="text-slate-400 text-sm mb-6">
-            Enter your environmental statistics below to estimate your monthly carbon footprint score.
+            Enter your environmental statistics below to estimate your monthly carbon footprint
+            score.
           </p>
 
           {/* Transport Input */}
@@ -183,8 +187,8 @@ export default function Calculator({ onCalculate, prefilledValues }) {
               aria-invalid={errors.transport ? 'true' : 'false'}
               aria-describedby={errors.transport ? 'transport-error' : undefined}
               className={`w-full px-4 py-3 rounded-xl bg-slate-950/80 border text-white transition-all outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
-                errors.transport 
-                  ? 'border-red-500/50 focus-visible:border-red-500' 
+                errors.transport
+                  ? 'border-red-500/50 focus-visible:border-red-500'
                   : 'border-slate-800 hover:border-slate-700 focus-visible:border-emerald-500'
               }`}
             />
@@ -214,9 +218,17 @@ export default function Calculator({ onCalculate, prefilledValues }) {
                 <option value="mixed">Mixed Diet (Average emissions)</option>
                 <option value="non-veg">Non-Vegetarian (High emissions)</option>
               </select>
-              <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400" aria-hidden="true">
+              <div
+                className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400"
+                aria-hidden="true"
+              >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </div>
@@ -247,8 +259,8 @@ export default function Calculator({ onCalculate, prefilledValues }) {
               aria-invalid={errors.electricity ? 'true' : 'false'}
               aria-describedby={errors.electricity ? 'electricity-error' : undefined}
               className={`w-full px-4 py-3 rounded-xl bg-slate-950/80 border text-white transition-all outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
-                errors.electricity 
-                  ? 'border-red-500/50 focus-visible:border-red-500' 
+                errors.electricity
+                  ? 'border-red-500/50 focus-visible:border-red-500'
                   : 'border-slate-800 hover:border-slate-700 focus-visible:border-emerald-500'
               }`}
             />
@@ -269,9 +281,25 @@ export default function Calculator({ onCalculate, prefilledValues }) {
           {isLoading ? (
             <>
               {/* Spinner Icon */}
-              <svg className="animate-spin h-5 w-5 text-slate-950" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              <svg
+                className="animate-spin h-5 w-5 text-slate-950"
+                fill="none"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
               <span>Calculating...</span>
             </>
@@ -289,11 +317,10 @@ Calculator.propTypes = {
   prefilledValues: PropTypes.shape({
     transport: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     electricity: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    foodHabit: PropTypes.string,
-  }),
+    foodHabit: PropTypes.string
+  })
 };
 
 Calculator.defaultProps = {
-  prefilledValues: null,
+  prefilledValues: null
 };
-

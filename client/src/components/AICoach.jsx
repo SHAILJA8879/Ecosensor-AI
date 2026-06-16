@@ -34,7 +34,7 @@ import { STORAGE_KEYS } from '../utils/constants';
 /**
  * AICoach component for EcoSense AI.
  * Queries Gemini for a custom action plan and renders the results.
- * 
+ *
  * @component
  * @param {Object} props - Component props
  * @param {number} props.score - The current Carbon Health Score
@@ -71,20 +71,23 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
   }, [plan]);
 
   // Save checked days progress to localStorage
-  const handleCheckDay = useCallback((dayNum, isChecked) => {
-    if (!plan?.sevenDayChallenge?.title) return;
-    
-    const storageKey = `${STORAGE_KEYS.CHALLENGE}-${plan.sevenDayChallenge.title.replace(/\s+/g, '_')}`;
-    setCheckedDays((prev) => {
-      const updated = { ...prev, [dayNum]: isChecked };
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(updated));
-      } catch {
-        console.error('Failed to save progress to localStorage.');
-      }
-      return updated;
-    });
-  }, [plan]);
+  const handleCheckDay = useCallback(
+    (dayNum, isChecked) => {
+      if (!plan?.sevenDayChallenge?.title) return;
+
+      const storageKey = `${STORAGE_KEYS.CHALLENGE}-${plan.sevenDayChallenge.title.replace(/\s+/g, '_')}`;
+      setCheckedDays((prev) => {
+        const updated = { ...prev, [dayNum]: isChecked };
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(updated));
+        } catch {
+          console.error('Failed to save progress to localStorage.');
+        }
+        return updated;
+      });
+    },
+    [plan]
+  );
 
   const toggleAccordion = useCallback((index) => {
     setOpenAccordion((prev) => ({ ...prev, [index]: !prev[index] }));
@@ -120,14 +123,17 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
       }
     } catch (err) {
       console.error(err);
-      let errorMsg = 'Failed to retrieve your carbon action plan. Check your server settings and try again.';
-      
+      let errorMsg =
+        'Failed to retrieve your carbon action plan. Check your server settings and try again.';
+
       if (err.message.includes('429')) {
-        errorMsg = 'The AI Coach is currently busy helping other users. Please try again in a few moments.';
+        errorMsg =
+          'The AI Coach is currently busy helping other users. Please try again in a few moments.';
       } else if (err.name === 'TypeError' || err.message.includes('fetch')) {
-        errorMsg = 'Unable to connect to the coaching server. Please verify the backend service is running.';
+        errorMsg =
+          'Unable to connect to the coaching server. Please verify the backend service is running.';
       }
-      
+
       setError(errorMsg);
       setAnnouncement(`Coaching error: ${errorMsg}`);
     } finally {
@@ -140,26 +146,50 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
     switch (source?.toLowerCase()) {
       case 'transport':
         return (
-          <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 border border-amber-500/20" aria-hidden="true">
+          <div
+            className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 border border-amber-500/20"
+            aria-hidden="true"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+              />
             </svg>
           </div>
         );
       case 'food':
         return (
-          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20" aria-hidden="true">
+          <div
+            className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20"
+            aria-hidden="true"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3c-1.2 0-2.4 1.2-3 2.4-1.2 0-2.4 1.2-2.4 2.4 0 1.2 1.2 2.4 2.4 3 0 1.2 1.2 2.4 2.4 2.4 1.2 0 2.4-1.2 3-2.4 1.2 0 2.4-1.2 2.4-2.4 0-1.2-1.2-2.4-2.4-3 0-1.2-1.2-2.4-2.4-2.4z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 3c-1.2 0-2.4 1.2-3 2.4-1.2 0-2.4 1.2-2.4 2.4 0 1.2 1.2 2.4 2.4 3 0 1.2 1.2 2.4 2.4 2.4 1.2 0 2.4-1.2 3-2.4 1.2 0 2.4-1.2 2.4-2.4 0-1.2-1.2-2.4-2.4-3 0-1.2-1.2-2.4-2.4-2.4z"
+              />
             </svg>
           </div>
         );
       case 'electricity':
       default:
         return (
-          <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400 border border-teal-500/20" aria-hidden="true">
+          <div
+            className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400 border border-teal-500/20"
+            aria-hidden="true"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
             </svg>
           </div>
         );
@@ -179,7 +209,8 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
             Get Personalized Action Coach Insights
           </h3>
           <p className="text-slate-400 text-sm max-w-lg mx-auto mb-6">
-            Leverage Google Gemini Generative AI to scan your profile data and build a customized eco-challenge action list.
+            Leverage Google Gemini Generative AI to scan your profile data and build a customized
+            eco-challenge action list.
           </p>
           <button
             onClick={handleGetPlan}
@@ -193,12 +224,30 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
       {/* 2. Loading State */}
       {isLoading && (
         <div className="text-center py-16 bg-slate-900/20 border border-slate-800 rounded-3xl backdrop-blur-xs flex flex-col items-center justify-center">
-          <svg className="animate-spin h-10 w-10 text-emerald-500 mb-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          <svg
+            className="animate-spin h-10 w-10 text-emerald-500 mb-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
           </svg>
           <p className="text-slate-300 font-semibold text-lg">Consulting AI Carbon Coach...</p>
-          <p className="text-slate-400 text-xs mt-2">Formulating actionable carbon reductions based on your stats...</p>
+          <p className="text-slate-400 text-xs mt-2">
+            Formulating actionable carbon reductions based on your stats...
+          </p>
         </div>
       )}
 
@@ -207,7 +256,12 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
         <div className="p-6 bg-red-500/10 border border-red-500/20 rounded-3xl flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-4 text-center md:text-left">
           <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center text-red-400 shrink-0">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
             </svg>
           </div>
           <div>
@@ -226,34 +280,42 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
       {/* 4. Display Recommendations Layout */}
       {plan && !isLoading && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
           {/* Left Block: Analysis & Recommendations list */}
           <div className="lg:col-span-7 space-y-6">
-            
             {/* Analysis card */}
             <article className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm shadow-xl">
               <h4 className="text-lg font-bold font-display text-white mb-3">AI Coach Analysis</h4>
-              <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line">{plan.analysis}</p>
+              <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line">
+                {plan.analysis}
+              </p>
             </article>
 
             {/* Top emission driver */}
             <article className="p-6 bg-slate-900/40 border border-slate-800/80 rounded-2xl flex items-start space-x-4">
               {renderSourceIcon(plan.topEmissionSource)}
               <div>
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-400">Primary Emission Driver</h4>
-                <p className="text-lg font-bold text-white capitalize mt-0.5">{plan.topEmissionSource}</p>
-                <p className="text-slate-400 text-xs mt-1 leading-relaxed">{plan.topEmissionSourceExplanation}</p>
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
+                  Primary Emission Driver
+                </h4>
+                <p className="text-lg font-bold text-white capitalize mt-0.5">
+                  {plan.topEmissionSource}
+                </p>
+                <p className="text-slate-400 text-xs mt-1 leading-relaxed">
+                  {plan.topEmissionSourceExplanation}
+                </p>
               </div>
             </article>
 
             {/* Expandable Recommendations Accordion */}
             <section aria-label="Action Recommendations List" className="space-y-3">
-              <h4 className="text-lg font-bold font-display text-white mb-2 px-1">Top Actionable Steps</h4>
+              <h4 className="text-lg font-bold font-display text-white mb-2 px-1">
+                Top Actionable Steps
+              </h4>
               {plan.recommendations.map((rec, i) => {
                 const isOpen = !!openAccordion[i];
                 return (
-                  <article 
-                    key={i} 
+                  <article
+                    key={i}
                     className="border border-slate-850 rounded-xl bg-slate-900/20 hover:border-slate-800 transition-colors overflow-hidden"
                   >
                     <button
@@ -263,27 +325,36 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
                       className="w-full flex justify-between items-center p-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl"
                     >
                       <div className="flex items-center space-x-3 pr-2">
-                        <span className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-xs text-slate-400 font-bold shrink-0">{i + 1}</span>
-                        <span className="text-sm font-semibold text-white tracking-tight">{rec.title}</span>
+                        <span className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-xs text-slate-400 font-bold shrink-0">
+                          {i + 1}
+                        </span>
+                        <span className="text-sm font-semibold text-white tracking-tight">
+                          {rec.title}
+                        </span>
                       </div>
                       <div className="flex items-center space-x-3 shrink-0">
                         <span className="px-2.5 py-1 text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">
                           -{rec.estimatedCO2Saved} kg/wk
                         </span>
-                        <svg 
-                          className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
-                          fill="none" 
-                          stroke="currentColor" 
+                        <svg
+                          className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                          fill="none"
+                          stroke="currentColor"
                           viewBox="0 0 24 24"
                           aria-hidden="true"
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 9l-7 7-7-7"
+                          />
                         </svg>
                       </div>
                     </button>
                     {isOpen && (
-                      <div 
-                        id={`rec-desc-${i}`} 
+                      <div
+                        id={`rec-desc-${i}`}
                         className="p-4 pt-0 border-t border-slate-900 text-xs text-slate-400 leading-relaxed"
                       >
                         {rec.description}
@@ -297,7 +368,6 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
 
           {/* Right Block: Challenge & Score Targets */}
           <div className="lg:col-span-5 space-y-6">
-            
             {/* 7-Day Challenge checklist */}
             <section className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm shadow-xl">
               <div className="mb-4">
@@ -313,11 +383,11 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
                 {plan.sevenDayChallenge.days.map((item, idx) => {
                   const isChecked = !!checkedDays[item.day];
                   return (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       className={`flex items-start space-x-3 p-3 rounded-xl border transition-all ${
-                        isChecked 
-                          ? 'border-emerald-500/20 bg-emerald-500/5' 
+                        isChecked
+                          ? 'border-emerald-500/20 bg-emerald-500/5'
                           : 'border-slate-850 hover:border-slate-800 bg-slate-950/20'
                       }`}
                     >
@@ -329,10 +399,12 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
                         className="w-4 h-4 rounded border-slate-800 text-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-slate-950 bg-slate-950/80 mt-0.5 accent-emerald-500 cursor-pointer"
                         aria-label={`Mark Day ${item.day} challenge task as completed`}
                       />
-                      <label 
-                        htmlFor={`day-chk-${item.day}`} 
+                      <label
+                        htmlFor={`day-chk-${item.day}`}
                         className={`text-xs select-none cursor-pointer leading-relaxed ${
-                          isChecked ? 'line-through text-slate-400' : 'text-slate-300 hover:text-white'
+                          isChecked
+                            ? 'line-through text-slate-400'
+                            : 'text-slate-300 hover:text-white'
                         }`}
                       >
                         <span className="font-bold text-slate-400 mr-1.5">Day {item.day}:</span>
@@ -351,13 +423,17 @@ export default function AICoach({ score, breakdown, rawInputs, onPlanGenerated }
               </h4>
               <div className="grid grid-cols-2 gap-4 items-center">
                 <div>
-                  <span className="text-xs text-slate-400 font-semibold uppercase block mb-2">Current Score</span>
+                  <span className="text-xs text-slate-400 font-semibold uppercase block mb-2">
+                    Current Score
+                  </span>
                   <div className="scale-85 origin-center">
                     <ScoreGauge score={score} />
                   </div>
                 </div>
                 <div>
-                  <span className="text-xs text-slate-400 font-semibold uppercase block mb-2">Projected Score</span>
+                  <span className="text-xs text-slate-400 font-semibold uppercase block mb-2">
+                    Projected Score
+                  </span>
                   <div className="scale-85 origin-center animate-pulse">
                     <ScoreGauge score={plan.predictedImprovement.newScore} />
                   </div>
@@ -397,6 +473,5 @@ AICoach.propTypes = {
 };
 
 AICoach.defaultProps = {
-  onPlanGenerated: () => {},
+  onPlanGenerated: () => {}
 };
-

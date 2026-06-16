@@ -9,7 +9,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 /**
  * ScoreGauge component for EcoSense AI.
  * Renders a circular gauge visualization of the Carbon Health Score using Chart.js.
- * 
+ *
  * @component
  * @param {Object} props - Component props
  * @param {number} props.score - The Carbon Health Score (0-100)
@@ -43,7 +43,7 @@ export default function ScoreGauge({ score }) {
         backgroundColor: [color, trackColor],
         borderWidth: 0,
         borderRadius: [10, 0],
-        hoverBackgroundColor: [color, trackColor],
+        hoverBackgroundColor: [color, trackColor]
       }
     ]
   };
@@ -61,18 +61,16 @@ export default function ScoreGauge({ score }) {
 
   return (
     <div className="w-full bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 md:p-8 backdrop-blur-sm shadow-xl flex flex-col items-center justify-center text-center">
-      <h3 className="text-lg font-bold font-display text-white mb-6">
-        Carbon Health Score
-      </h3>
+      <h3 className="text-lg font-bold font-display text-white mb-6">Carbon Health Score</h3>
 
       {/* Visual Canvas Gauge Wrapper */}
-      <div 
+      <div
         className="relative w-48 h-48 flex items-center justify-center"
         role="img"
         aria-label={`Carbon Health Score is ${score} out of 100, rated as ${label}.`}
       >
         <Doughnut data={chartData} options={chartOptions} />
-        
+
         {/* Centered Score Label Overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
           <span className="text-5xl font-extrabold font-display text-white tracking-tight leading-none">
@@ -85,16 +83,13 @@ export default function ScoreGauge({ score }) {
       </div>
 
       {/* Accessibility details */}
-      <p className="text-slate-400 text-sm mt-6 leading-relaxed max-w-sm">
-        {textDescription}
-      </p>
+      <p className="text-slate-400 text-sm mt-6 leading-relaxed max-w-sm">{textDescription}</p>
     </div>
   );
 }
 
 ScoreGauge.propTypes = {
-  score: PropTypes.number.isRequired,
+  score: PropTypes.number.isRequired
 };
 
 ScoreGauge.defaultProps = {};
-

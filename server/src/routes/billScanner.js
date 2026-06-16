@@ -48,7 +48,7 @@ const uploadMiddleware = (req, res, next) => {
         message: err.message
       });
     }
-    
+
     // Sanitize filename on the server if present
     if (req.file && req.file.originalname) {
       req.file.originalname = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
@@ -60,37 +60,36 @@ const uploadMiddleware = (req, res, next) => {
 
 // Express Validator configuration for the file upload route
 const validateBillScan = [
-  body('bill')
-    .custom((_, { req }) => {
-      if (!req.file) {
-        throw new Error('No bill image file provided.');
-      }
-      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
-      if (!allowedMimeTypes.includes(req.file.mimetype)) {
-        throw new Error('Invalid file type. Only JPEG, PNG, and WEBP images are accepted.');
-      }
+  body('bill').custom((_, { req }) => {
+    if (!req.file) {
+      throw new Error('No bill image file provided.');
+    }
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedMimeTypes.includes(req.file.mimetype)) {
+      throw new Error('Invalid file type. Only JPEG, PNG, and WEBP images are accepted.');
+    }
 
-      const buffer = req.file.buffer;
-      if (!buffer || buffer.length < 12) {
-        throw new Error('Invalid file buffer or file too small.');
-      }
+    const buffer = req.file.buffer;
+    if (!buffer || buffer.length < 12) {
+      throw new Error('Invalid file buffer or file too small.');
+    }
 
-      if (req.file.mimetype === 'image/jpeg' || req.file.mimetype === 'image/jpg') {
-        if (buffer[0] !== 0xFF || buffer[1] !== 0xD8) {
-          throw new Error('File content does not match JPEG/JPG format.');
-        }
-      } else if (req.file.mimetype === 'image/png') {
-        if (buffer[0] !== 0x89 || buffer[1] !== 0x50) {
-          throw new Error('File content does not match PNG format.');
-        }
-      } else if (req.file.mimetype === 'image/webp') {
-        if (buffer.toString('ascii', 8, 12) !== 'WEBP') {
-          throw new Error('File content does not match WEBP format.');
-        }
+    if (req.file.mimetype === 'image/jpeg' || req.file.mimetype === 'image/jpg') {
+      if (buffer[0] !== 0xff || buffer[1] !== 0xd8) {
+        throw new Error('File content does not match JPEG/JPG format.');
       }
+    } else if (req.file.mimetype === 'image/png') {
+      if (buffer[0] !== 0x89 || buffer[1] !== 0x50) {
+        throw new Error('File content does not match PNG format.');
+      }
+    } else if (req.file.mimetype === 'image/webp') {
+      if (buffer.toString('ascii', 8, 12) !== 'WEBP') {
+        throw new Error('File content does not match WEBP format.');
+      }
+    }
 
-      return true;
-    }),
+    return true;
+  }),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -166,93 +165,98 @@ function sanitizeNumericVal(val) {
  * @param {express.Response} res
  * @returns {Promise<void>}
  */
-router.post('/scan-bill', scannerRateLimiter, uploadMiddleware, validateBillScan, async function handleBillScan(req, res) {
-  // 1. Validate Gemini API configurations
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'your_gemini_api_key_here') {
-    return res.status(500).json({
-      success: false,
-      data: null,
-      message: 'Gemini API key configuration is missing on the server.'
-    });
-  }
+router.post(
+  '/scan-bill',
+  scannerRateLimiter,
+  uploadMiddleware,
+  validateBillScan,
+  async function handleBillScan(req, res) {
+    // 1. Validate Gemini API configurations
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey || apiKey === 'your_gemini_api_key_here') {
+      return res.status(500).json({
+        success: false,
+        data: null,
+        message: 'Gemini API key configuration is missing on the server.'
+      });
+    }
 
-  try {
-    // Initialize Gemini SDK client
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
-      generationConfig: { responseMimeType: 'application/json' }
-    });
+    try {
+      // Initialize Gemini SDK client
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        generationConfig: { responseMimeType: 'application/json' }
+      });
 
-    // Prepare image base64 structure
-    const imagePart = {
-      inlineData: {
-        data: req.file.buffer.toString('base64'),
-        mimeType: req.file.mimetype
-      }
-    };
+      // Prepare image base64 structure
+      const imagePart = {
+        inlineData: {
+          data: req.file.buffer.toString('base64'),
+          mimeType: req.file.mimetype
+        }
+      };
 
-    // Prompt optimized for structure extraction
-    const prompt = `Analyze this utility bill. Extract the following properties and return them in a JSON object:
+      // Prompt optimized for structure extraction
+      const prompt = `Analyze this utility bill. Extract the following properties and return them in a JSON object:
     - "kwh": The total electricity consumption in kWh. Must be a number. If not found, return null.
     - "fuel_liters": The total fuel/gas consumption in liters. Must be a number. If not found, return null.
     - "billing_date": The billing date formatted as YYYY-MM-DD. If not found, return null.
 
     Do not estimate or guess values. Return nulls if they are not explicitly or clearly readable on the bill.`;
 
-    // Call Gemini API
-    const result = await model.generateContent([prompt, imagePart]);
-    const response = await result.response;
-    const text = response.text();
+      // Call Gemini API
+      const result = await model.generateContent([prompt, imagePart]);
+      const response = await result.response;
+      const text = response.text();
 
-    const sanitizedText = sanitizeResponse(text);
+      const sanitizedText = sanitizeResponse(text);
 
-    // Parse and sanitize raw Gemini response
-    let parsedJson;
-    try {
-      parsedJson = JSON.parse(sanitizedText);
-    } catch (e) {
-      console.error('Gemini malformed JSON response:', text);
+      // Parse and sanitize raw Gemini response
+      let parsedJson;
+      try {
+        parsedJson = JSON.parse(sanitizedText);
+      } catch (e) {
+        console.error('Gemini malformed JSON response:', text);
+        return res.status(500).json({
+          success: false,
+          data: null,
+          message: 'The AI model returned an unparsable response. Please try again.'
+        });
+      }
+
+      // Sanitize properties to prevent script injections and type errors
+      const sanitizedData = {
+        kwh: sanitizeNumericVal(parsedJson.kwh),
+        fuel_liters: sanitizeNumericVal(parsedJson.fuel_liters),
+        billing_date: sanitizeBillingDate(parsedJson.billing_date)
+      };
+
+      return res.status(200).json({
+        success: true,
+        data: sanitizedData,
+        message: 'Bill successfully scanned and parsed.'
+      });
+    } catch (apiError) {
+      console.error('Gemini API Integration Error:', apiError.message);
+
+      // Handle Rate Limit (429) errors
+      if (apiError.message.includes('429') || apiError.message.includes('RESOURCE_EXHAUSTED')) {
+        return res.status(429).json({
+          success: false,
+          data: null,
+          message: 'The AI service is currently overloaded. Please try again in a moment.'
+        });
+      }
+
+      // Handle other API validation/service errors
       return res.status(500).json({
         success: false,
         data: null,
-        message: 'The AI model returned an unparsable response. Please try again.'
+        message: 'An error occurred while communicating with the AI scanning service.'
       });
     }
-
-    // Sanitize properties to prevent script injections and type errors
-    const sanitizedData = {
-      kwh: sanitizeNumericVal(parsedJson.kwh),
-      fuel_liters: sanitizeNumericVal(parsedJson.fuel_liters),
-      billing_date: sanitizeBillingDate(parsedJson.billing_date)
-    };
-
-    return res.status(200).json({
-      success: true,
-      data: sanitizedData,
-      message: 'Bill successfully scanned and parsed.'
-    });
-
-  } catch (apiError) {
-    console.error('Gemini API Integration Error:', apiError.message);
-
-    // Handle Rate Limit (429) errors
-    if (apiError.message.includes('429') || apiError.message.includes('RESOURCE_EXHAUSTED')) {
-      return res.status(429).json({
-        success: false,
-        data: null,
-        message: 'The AI service is currently overloaded. Please try again in a moment.'
-      });
-    }
-
-    // Handle other API validation/service errors
-    return res.status(500).json({
-      success: false,
-      data: null,
-      message: 'An error occurred while communicating with the AI scanning service.'
-    });
   }
-});
+);
 
 module.exports = router;

@@ -137,7 +137,13 @@ ecosense-ai/
 - **CORS** — Restricted to allowed origins only
 - **Request ID** — UUID tracing on every request
 
----
+- **Strict Content Security Policy (CSP)** enforced via Helmet.js, explicitly whitelisting Google Fonts and Vite HMR
+- **Rate limiting** on all AI endpoints (10 requests/15 min) to prevent abuse and API exhaustion
+- **Input validation and sanitization** via express-validator
+- **File upload validation** (type + size limits) for Gemini Vision endpoint
+- **Replaced outdated external dependencies** with native `crypto.randomUUID()` for secure, collision-free request tracing
+- **CORS** configured for production domains only
+- **Environment Variables** used exclusively for all secrets and API keys
 
 
 
@@ -157,20 +163,27 @@ ecosense-ai/
 
 🧪 Testing
 
-bash# Run all tests
+bash# Run all client and server tests
 npm test
 
-# Run with coverage report
-npm test -- --coverage
+# Run tests with detailed coverage report
+npm run test:coverage
 
+The application features a robust test suite with **>85% code coverage** and **65 passing unit tests**.
 Test coverage includes:
 
 
-Carbon calculation utility functions
-localStorage history management
-API route validation
-Bill Scanner file validation
-Component rendering and interaction
+Carbon calculation utility functions and formulas
+localStorage history management and state persistence
+Express API route validation and error handling
+Bill Scanner file validation and limits
+React Component rendering, DOM interactions, and JSDOM chart mocking
+
+
+✨ Code Quality
+
+Prettier is configured to enforce consistent code formatting (`singleQuote`, `printWidth: 100`, `trailingComma`) across the entire repository.
+Modular architecture with separated concerns (`routes`, `components`, `layout`, `utils`).
 
 
 

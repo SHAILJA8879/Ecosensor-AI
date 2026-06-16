@@ -29,7 +29,9 @@ describe('Calculator', () => {
     expect(screen.getByText(/dietary habits/i)).toBeInTheDocument();
 
     // Check Electricity Usage input and label
-    const electricityInput = screen.getByLabelText(/electricity usage in kilowatt-hours per month/i);
+    const electricityInput = screen.getByLabelText(
+      /electricity usage in kilowatt-hours per month/i
+    );
     expect(electricityInput).toBeInTheDocument();
     expect(screen.getByText(/electricity usage/i)).toBeInTheDocument();
 
@@ -41,7 +43,9 @@ describe('Calculator', () => {
     render(<Calculator onCalculate={onCalculateMock} />);
 
     const transportInput = screen.getByLabelText(/transport distance in kilometers per week/i);
-    const electricityInput = screen.getByLabelText(/electricity usage in kilowatt-hours per month/i);
+    const electricityInput = screen.getByLabelText(
+      /electricity usage in kilowatt-hours per month/i
+    );
     const submitButton = screen.getByRole('button', { name: /compute footprint/i });
 
     // Try setting negative values (bypass keypress validation by assigning value directly)
@@ -51,8 +55,12 @@ describe('Calculator', () => {
     fireEvent.click(submitButton);
 
     // Errors should be displayed inline
-    expect(await screen.findByText(/transport distance must be a non-negative number/i)).toBeInTheDocument();
-    expect(await screen.findByText(/electricity usage must be a non-negative number/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/transport distance must be a non-negative number/i)
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(/electricity usage must be a non-negative number/i)
+    ).toBeInTheDocument();
     expect(onCalculateMock).not.toHaveBeenCalled();
   });
 
@@ -72,7 +80,9 @@ describe('Calculator', () => {
 
     const transportInput = screen.getByLabelText(/transport distance in kilometers per week/i);
     const foodSelect = screen.getByLabelText(/your primary food diet category/i);
-    const electricityInput = screen.getByLabelText(/electricity usage in kilowatt-hours per month/i);
+    const electricityInput = screen.getByLabelText(
+      /electricity usage in kilowatt-hours per month/i
+    );
     const submitButton = screen.getByRole('button', { name: /compute footprint/i });
 
     // Set valid values
@@ -119,6 +129,8 @@ describe('Calculator', () => {
 
     expect(screen.getByLabelText(/transport distance in kilometers per week/i).value).toBe('120');
     expect(screen.getByLabelText(/your primary food diet category/i).value).toBe('non-veg');
-    expect(screen.getByLabelText(/electricity usage in kilowatt-hours per month/i).value).toBe('300');
+    expect(screen.getByLabelText(/electricity usage in kilowatt-hours per month/i).value).toBe(
+      '300'
+    );
   });
 });

@@ -1,5 +1,11 @@
 /* global Storage */
-import { saveEntry, getHistory, getWeeklyData, getMonthlyData, clearHistory } from '../utils/historyStorage';
+import {
+  saveEntry,
+  getHistory,
+  getWeeklyData,
+  getMonthlyData,
+  clearHistory
+} from '../utils/historyStorage';
 
 describe('History Storage Utility', () => {
   const STORAGE_KEY = 'ecosense_history';
@@ -41,9 +47,30 @@ describe('History Storage Utility', () => {
 
   // 3. Date Sorting (Newest First)
   test('should keep history sorted by date with newest entries first', () => {
-    const entryOld = { date: '2026-06-10', carbonScore: 70, transport: 10, food: 30, electricity: 100, total: 140 };
-    const entryNew = { date: '2026-06-12', carbonScore: 80, transport: 20, food: 30, electricity: 100, total: 150 };
-    const entryMid = { date: '2026-06-11', carbonScore: 75, transport: 15, food: 30, electricity: 100, total: 145 };
+    const entryOld = {
+      date: '2026-06-10',
+      carbonScore: 70,
+      transport: 10,
+      food: 30,
+      electricity: 100,
+      total: 140
+    };
+    const entryNew = {
+      date: '2026-06-12',
+      carbonScore: 80,
+      transport: 20,
+      food: 30,
+      electricity: 100,
+      total: 150
+    };
+    const entryMid = {
+      date: '2026-06-11',
+      carbonScore: 75,
+      transport: 15,
+      food: 30,
+      electricity: 100,
+      total: 145
+    };
 
     saveEntry(entryOld);
     saveEntry(entryNew);
@@ -58,8 +85,15 @@ describe('History Storage Utility', () => {
 
   // 4. Overwrite/Merge Duplicate Date Entry
   test('should overwrite and merge an existing entry if saved with the same date', () => {
-    const entry1 = { date: '2026-06-12', carbonScore: 82, transport: 90.93, food: 45, electricity: 164, total: 299.93 };
-    const entry2 = { date: '2026-06-12', carbonScore: 85, total: 290.00, predictedScore: 90 };
+    const entry1 = {
+      date: '2026-06-12',
+      carbonScore: 82,
+      transport: 90.93,
+      food: 45,
+      electricity: 164,
+      total: 299.93
+    };
+    const entry2 = { date: '2026-06-12', carbonScore: 85, total: 290.0, predictedScore: 90 };
 
     saveEntry(entry1);
     saveEntry(entry2);
@@ -105,10 +139,10 @@ describe('History Storage Utility', () => {
   // 6. Corrupted JSON Handling
   test('should handle corrupted JSON string parsing in localStorage gracefully by returning empty array and clearing storage', () => {
     localStorage.setItem(STORAGE_KEY, 'corrupted{json:invalid}');
-    
+
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     const history = getHistory();
-    
+
     expect(history).toEqual([]);
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
     consoleSpy.mockRestore();
@@ -117,7 +151,7 @@ describe('History Storage Utility', () => {
   // 7. Non-array JSON Handling
   test('should handle non-array JSON in localStorage gracefully by clearing storage and returning empty array', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ notAnArray: true }));
-    
+
     const history = getHistory();
     expect(history).toEqual([]);
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
@@ -125,9 +159,16 @@ describe('History Storage Utility', () => {
 
   // 8. Clearing History
   test('should successfully clear history from storage', () => {
-    const entry = { date: '2026-06-12', carbonScore: 82, transport: 10, food: 30, electricity: 100, total: 140 };
+    const entry = {
+      date: '2026-06-12',
+      carbonScore: 82,
+      transport: 10,
+      food: 30,
+      electricity: 100,
+      total: 140
+    };
     saveEntry(entry);
-    
+
     const cleared = clearHistory();
     expect(cleared).toBe(true);
     expect(getHistory()).toEqual([]);
@@ -147,8 +188,15 @@ describe('History Storage Utility', () => {
 
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-    const entry = { date: '2026-06-12', carbonScore: 82, transport: 10, food: 30, electricity: 100, total: 140 };
-    
+    const entry = {
+      date: '2026-06-12',
+      carbonScore: 82,
+      transport: 10,
+      food: 30,
+      electricity: 100,
+      total: 140
+    };
+
     expect(saveEntry(entry)).toBe(false);
     expect(getHistory()).toEqual([]);
     expect(clearHistory()).toBe(false);

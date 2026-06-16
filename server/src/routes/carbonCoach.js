@@ -37,7 +37,7 @@ const validateCoachRequest = [
     .isArray()
     .withMessage('History must be an array of past scores.')
     .custom((arr) => {
-      if (arr && !arr.every(val => typeof val === 'number' && val >= 0 && val <= 100)) {
+      if (arr && !arr.every((val) => typeof val === 'number' && val >= 0 && val <= 100)) {
         throw new Error('History items must be scores between 0 and 100.');
       }
       return true;
@@ -92,21 +92,26 @@ async function callGemini(model, prompt) {
  * @param {express.Response} res
  * @returns {Promise<void>}
  */
-router.post('/carbon-coach', coachRateLimiter, validateCoachRequest, async function handleCarbonCoach(req, res) {
-  const { carbonScore, transport, food, electricity, history = [] } = req.body;
-  
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'your_gemini_api_key_here') {
-    return res.status(500).json({
-      success: false,
-      data: null,
-      message: 'Gemini API key configuration is missing on the server.'
-    });
-  }
+router.post(
+  '/carbon-coach',
+  coachRateLimiter,
+  validateCoachRequest,
+  async function handleCarbonCoach(req, res) {
+    const { carbonScore, transport, food, electricity, history = [] } = req.body;
 
-  // Build the structured prompt
-  const historyText = history.length > 0 ? `Your past score history: [${history.join(', ')}].` : '';
-  const prompt = `You are the EcoSense AI Carbon Coach. Provide a highly personalized carbon footprint analysis and action plan based on the user's current data.
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey || apiKey === 'your_gemini_api_key_here') {
+      return res.status(500).json({
+        success: false,
+        data: null,
+        message: 'Gemini API key configuration is missing on the server.'
+      });
+    }
+
+    // Build the structured prompt
+    const historyText =
+      history.length > 0 ? `Your past score history: [${history.join(', ')}].` : '';
+    const prompt = `You are the EcoSense AI Carbon Coach. Provide a highly personalized carbon footprint analysis and action plan based on the user's current data.
   
   User Data Profile:
   - Carbon Score: ${carbonScore}/100
@@ -156,48 +161,52 @@ router.post('/carbon-coach', coachRateLimiter, validateCoachRequest, async funct
   - The "sevenDayChallenge.days" array must contain EXACTLY 7 items, indexed 1 to 7.
   - The "estimatedCO2Saved" and "newScore" must be numbers (not stringified values).`;
 
-  try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
-      generationConfig: { responseMimeType: 'application/json' }
-    });
-
-    let coachData;
     try {
-      // First attempt to execute Gemini call
-      coachData = await callGemini(model, prompt);
-    } catch (firstError) {
-      console.warn('Gemini first call failed or returned malformed JSON. Retrying once...', firstError.message);
-      // Single-retry attempt
-      coachData = await callGemini(model, prompt);
-    }
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        generationConfig: { responseMimeType: 'application/json' }
+      });
 
-    return res.status(200).json({
-      success: true,
-      data: coachData,
-      message: 'Coaching recommendations generated successfully.'
-    });
+      let coachData;
+      try {
+        // First attempt to execute Gemini call
+        coachData = await callGemini(model, prompt);
+      } catch (firstError) {
+        console.warn(
+          'Gemini first call failed or returned malformed JSON. Retrying once...',
+          firstError.message
+        );
+        // Single-retry attempt
+        coachData = await callGemini(model, prompt);
+      }
 
-  } catch (err) {
-    console.error('Gemini Coaching API Error:', err.message);
+      return res.status(200).json({
+        success: true,
+        data: coachData,
+        message: 'Coaching recommendations generated successfully.'
+      });
+    } catch (err) {
+      console.error('Gemini Coaching API Error:', err.message);
 
-    // Rate limiting (429) checks
-    if (err.message.includes('429') || err.message.includes('RESOURCE_EXHAUSTED')) {
-      return res.status(429).json({
+      // Rate limiting (429) checks
+      if (err.message.includes('429') || err.message.includes('RESOURCE_EXHAUSTED')) {
+        return res.status(429).json({
+          success: false,
+          data: null,
+          message: 'The coaching service is currently overloaded. Please try again shortly.'
+        });
+      }
+
+      // Default error fallback
+      return res.status(500).json({
         success: false,
         data: null,
-        message: 'The coaching service is currently overloaded. Please try again shortly.'
+        message:
+          'Failed to generate coaching insights. Please ensure your inputs are valid and try again.'
       });
     }
-
-    // Default error fallback
-    return res.status(500).json({
-      success: false,
-      data: null,
-      message: 'Failed to generate coaching insights. Please ensure your inputs are valid and try again.'
-    });
   }
-});
+);
 
 module.exports = router;

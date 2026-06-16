@@ -14,13 +14,17 @@ const CategoryChart = React.lazy(() =>
 
 // Unified loading fallback spinner for lazily imported charts
 const ChartLoadingFallback = () => (
-  <div 
+  <div
     className="w-full h-full min-h-[220px] flex flex-col items-center justify-center text-slate-500 text-sm"
     aria-hidden="true"
   >
     <svg className="animate-spin h-6 w-6 text-emerald-500 mb-2" fill="none" viewBox="0 0 24 24">
       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      />
     </svg>
     <span>Loading visualization...</span>
   </div>
@@ -29,7 +33,7 @@ const ChartLoadingFallback = () => (
 /**
  * Dashboard component for EcoSense AI.
  * Renders carbon history insights, timeline line charts, category doughnut charts, and sortable tables.
- * 
+ *
  * @component
  * @param {Object} props - Component props
  * @param {function} props.onNavigateToCalculator - Callback to redirect users to the calculator panel
@@ -96,14 +100,28 @@ export default function Dashboard({ onNavigateToCalculator }) {
   if (history.length === 0) {
     return (
       <div className="w-full max-w-2xl mx-auto text-center py-16 px-6 bg-slate-900/40 border border-slate-800 rounded-3xl shadow-xl backdrop-blur-xs">
-        <div className="w-16 h-16 rounded-full bg-slate-950/80 border border-slate-800 flex items-center justify-center text-slate-400 mx-auto mb-6" aria-hidden="true">
-          <svg className="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        <div
+          className="w-16 h-16 rounded-full bg-slate-950/80 border border-slate-800 flex items-center justify-center text-slate-400 mx-auto mb-6"
+          aria-hidden="true"
+        >
+          <svg
+            className="w-8 h-8 text-emerald-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.5"
+              d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
           </svg>
         </div>
         <h2 className="text-2xl font-bold font-display text-white mb-3">No Carbon History Found</h2>
         <p className="text-slate-400 text-sm mb-8 max-w-md mx-auto leading-relaxed">
-          It looks like you haven't computed your emissions footprint yet. Complete your first calculation to unlock the tracking dashboard.
+          It looks like you haven't computed your emissions footprint yet. Complete your first
+          calculation to unlock the tracking dashboard.
         </p>
         <button
           onClick={onNavigateToCalculator}
@@ -117,12 +135,10 @@ export default function Dashboard({ onNavigateToCalculator }) {
 
   return (
     <div className="w-full space-y-8 animate-fade-in">
-      
       {/* Overview stats panel */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-        
         {/* Core score widget */}
-        <section 
+        <section
           className="lg:col-span-4 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center relative overflow-hidden"
           aria-label="Current Carbon Health Score Summary"
         >
@@ -130,47 +146,76 @@ export default function Dashboard({ onNavigateToCalculator }) {
 
           {/* Trend Indicator badge */}
           {trend.type !== 'none' && (
-            <div 
+            <div
               className={`absolute top-6 right-6 flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
-                trend.type === 'up' 
-                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                trend.type === 'up'
+                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                   : 'bg-red-500/10 text-red-400 border-red-500/20'
               }`}
               aria-label={`Score trend shows an ${trend.type === 'up' ? 'increase' : 'decrease'} of ${trend.diff} points compared to the last calculation.`}
             >
               {trend.type === 'up' ? (
                 // Upward Arrow (Positive improvement)
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                <svg
+                  className="w-3.5 h-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2.5"
+                    d="M5 10l7-7m0 0l7 7m-7-7v18"
+                  />
                 </svg>
               ) : (
                 // Downward Arrow (Decline)
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                <svg
+                  className="w-3.5 h-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2.5"
+                    d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                  />
                 </svg>
               )}
-              <span>{trend.type === 'up' ? '+' : '-'}{trend.diff} pts</span>
+              <span>
+                {trend.type === 'up' ? '+' : '-'}
+                {trend.diff} pts
+              </span>
             </div>
           )}
         </section>
 
         {/* Timeline Line Chart widget */}
-        <section 
+        <section
           className="lg:col-span-8 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between"
           aria-label="Score Progress Timeline Chart"
         >
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold font-display text-white">Score History</h3>
-            
+
             {/* Keyboard-accessible timeframe selector */}
-            <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-850" role="tablist" aria-label="Chart Timeline Scope">
+            <div
+              className="flex bg-slate-950 p-1 rounded-lg border border-slate-850"
+              role="tablist"
+              aria-label="Chart Timeline Scope"
+            >
               <button
                 role="tab"
                 aria-selected={timeframe === 'weekly'}
                 onClick={() => setTimeframe('weekly')}
                 className={`px-3 py-1.5 rounded-md text-xs font-semibold tracking-wide transition-all outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
-                  timeframe === 'weekly' 
-                    ? 'bg-slate-850 text-white font-bold' 
+                  timeframe === 'weekly'
+                    ? 'bg-slate-850 text-white font-bold'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -181,8 +226,8 @@ export default function Dashboard({ onNavigateToCalculator }) {
                 aria-selected={timeframe === 'monthly'}
                 onClick={() => setTimeframe('monthly')}
                 className={`px-3 py-1.5 rounded-md text-xs font-semibold tracking-wide transition-all outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
-                  timeframe === 'monthly' 
-                    ? 'bg-slate-850 text-white font-bold' 
+                  timeframe === 'monthly'
+                    ? 'bg-slate-850 text-white font-bold'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -191,7 +236,7 @@ export default function Dashboard({ onNavigateToCalculator }) {
             </div>
           </div>
 
-          <div 
+          <div
             className="flex-grow h-64 relative"
             role="img"
             aria-label={`Line chart indicating Carbon Health Scores over the last ${timeframe === 'weekly' ? '7' : '30'} entries.`}
@@ -200,25 +245,27 @@ export default function Dashboard({ onNavigateToCalculator }) {
               <ProgressChart historyData={timelineData} />
             </Suspense>
           </div>
-          
+
           {/* Accessible Text Alternative for Line Chart */}
           <div className="sr-only">
-            Summary: Line chart tracking score timeline. 
-            {timelineData.map((item) => `On ${item.date}, score was ${item.carbonScore}.`).join(' ')}
+            Summary: Line chart tracking score timeline.
+            {timelineData
+              .map((item) => `On ${item.date}, score was ${item.carbonScore}.`)
+              .join(' ')}
           </div>
         </section>
       </div>
 
       {/* Category breakdown emissions splits */}
-      <section 
+      <section
         className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 md:p-8"
         aria-label="Emissions Category Split Insights"
       >
         <h3 className="text-lg font-bold font-display text-white mb-6">Latest Emissions Split</h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           {/* Doughnut canvas visualization */}
-          <div 
+          <div
             className="md:col-span-5 relative h-56 flex items-center justify-center"
             role="img"
             aria-label={`Doughnut chart indicating percentage splits for the latest monthly emissions total of ${latestEntry.total} kg CO2.`}
@@ -228,31 +275,47 @@ export default function Dashboard({ onNavigateToCalculator }) {
             </Suspense>
             {/* Centered Total Label */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
-              <span className="text-2xl font-black text-white">{Math.round(latestEntry.total)}</span>
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Total kg</span>
+              <span className="text-2xl font-black text-white">
+                {Math.round(latestEntry.total)}
+              </span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">
+                Total kg
+              </span>
             </div>
           </div>
 
           {/* Accessible detailed values column */}
           <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            
             {/* Transport metric card */}
             <article className="p-4 bg-slate-950/40 border border-slate-850 rounded-xl flex items-center space-x-3">
               <span className="w-2.5 h-10 rounded bg-amber-500 shrink-0" aria-hidden="true"></span>
               <div>
-                <h4 className="text-xs text-slate-400 font-medium uppercase tracking-wider">Transport</h4>
-                <div className="text-lg font-bold text-white mt-0.5">{latestEntry.transport} kg</div>
-                <div className="text-xs text-amber-400 font-semibold mt-0.5">{percentages.transport}% of total</div>
+                <h4 className="text-xs text-slate-400 font-medium uppercase tracking-wider">
+                  Transport
+                </h4>
+                <div className="text-lg font-bold text-white mt-0.5">
+                  {latestEntry.transport} kg
+                </div>
+                <div className="text-xs text-amber-400 font-semibold mt-0.5">
+                  {percentages.transport}% of total
+                </div>
               </div>
             </article>
 
             {/* Food Habits card */}
             <article className="p-4 bg-slate-950/40 border border-slate-850 rounded-xl flex items-center space-x-3">
-              <span className="w-2.5 h-10 rounded bg-emerald-500 shrink-0" aria-hidden="true"></span>
+              <span
+                className="w-2.5 h-10 rounded bg-emerald-500 shrink-0"
+                aria-hidden="true"
+              ></span>
               <div>
-                <h4 className="text-xs text-slate-400 font-medium uppercase tracking-wider">Food Habits</h4>
+                <h4 className="text-xs text-slate-400 font-medium uppercase tracking-wider">
+                  Food Habits
+                </h4>
                 <div className="text-lg font-bold text-white mt-0.5">{latestEntry.food} kg</div>
-                <div className="text-xs text-emerald-400 font-semibold mt-0.5">{percentages.food}% of total</div>
+                <div className="text-xs text-emerald-400 font-semibold mt-0.5">
+                  {percentages.food}% of total
+                </div>
               </div>
             </article>
 
@@ -260,18 +323,23 @@ export default function Dashboard({ onNavigateToCalculator }) {
             <article className="p-4 bg-slate-950/40 border border-slate-850 rounded-xl flex items-center space-x-3">
               <span className="w-2.5 h-10 rounded bg-cyan-500 shrink-0" aria-hidden="true"></span>
               <div>
-                <h4 className="text-xs text-slate-400 font-medium uppercase tracking-wider">Electricity</h4>
-                <div className="text-lg font-bold text-white mt-0.5">{latestEntry.electricity} kg</div>
-                <div className="text-xs text-cyan-400 font-semibold mt-0.5">{percentages.electricity}% of total</div>
+                <h4 className="text-xs text-slate-400 font-medium uppercase tracking-wider">
+                  Electricity
+                </h4>
+                <div className="text-lg font-bold text-white mt-0.5">
+                  {latestEntry.electricity} kg
+                </div>
+                <div className="text-xs text-cyan-400 font-semibold mt-0.5">
+                  {percentages.electricity}% of total
+                </div>
               </div>
             </article>
-
           </div>
         </div>
       </section>
 
       {/* History table and responsive logs list */}
-      <section 
+      <section
         className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6"
         aria-label="Historical Emissions Log entries"
       >
@@ -285,7 +353,7 @@ export default function Dashboard({ onNavigateToCalculator }) {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-850 text-slate-400 text-xs font-bold uppercase tracking-wider">
-                <th 
+                <th
                   className="py-4 px-4"
                   aria-sort={sortOrder === 'desc' ? 'descending' : 'ascending'}
                 >
@@ -295,14 +363,19 @@ export default function Dashboard({ onNavigateToCalculator }) {
                     aria-label={`Sort entries by date. Current sorting is ${sortOrder === 'desc' ? 'newest first' : 'oldest first'}`}
                   >
                     <span>Calculation Date</span>
-                    <svg 
+                    <svg
                       className={`w-3.5 h-3.5 text-slate-400 transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`}
-                      fill="none" 
-                      stroke="currentColor" 
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                       aria-hidden="true"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2.5"
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </button>
                 </th>
@@ -316,12 +389,12 @@ export default function Dashboard({ onNavigateToCalculator }) {
                   <td className="py-4 px-4 font-semibold text-slate-400">{item.date}</td>
                   <td className="py-4 px-4">
                     <span className="inline-flex items-center space-x-2">
-                      <span 
+                      <span
                         className={`w-2 h-2 rounded-full ${
-                          item.carbonScore <= SCORE_THRESHOLDS.LOW 
-                            ? 'bg-red-500' 
-                            : item.carbonScore <= SCORE_THRESHOLDS.MEDIUM 
-                              ? 'bg-amber-500' 
+                          item.carbonScore <= SCORE_THRESHOLDS.LOW
+                            ? 'bg-red-500'
+                            : item.carbonScore <= SCORE_THRESHOLDS.MEDIUM
+                              ? 'bg-amber-500'
                               : 'bg-emerald-500'
                         }`}
                         aria-hidden="true"
@@ -352,35 +425,42 @@ export default function Dashboard({ onNavigateToCalculator }) {
               aria-label={`Toggle Sort Date. Current: ${sortOrder === 'desc' ? 'newest first' : 'oldest first'}`}
             >
               <span>Sort: {sortOrder === 'desc' ? 'Newest' : 'Oldest'}</span>
-              <svg 
+              <svg
                 className={`w-3 h-3 text-slate-400 transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`}
-                fill="none" 
-                stroke="currentColor" 
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2.5"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
           </div>
           {tableData.map((item, index) => (
-            <article 
+            <article
               key={index}
               className="p-4 bg-slate-950/40 border border-slate-855 rounded-xl space-y-3"
             >
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{item.date}</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  {item.date}
+                </span>
                 <span className="font-extrabold text-white">{item.total} kg CO2e</span>
               </div>
               <div className="flex justify-between items-center pt-2 border-t border-slate-900/60">
                 <span className="text-xs text-slate-400 font-medium">Carbon Health Score</span>
                 <span className="inline-flex items-center space-x-1.5 text-sm font-bold text-white">
-                  <span 
+                  <span
                     className={`w-2 h-2 rounded-full ${
-                      item.carbonScore <= SCORE_THRESHOLDS.LOW 
-                        ? 'bg-red-500' 
-                        : item.carbonScore <= SCORE_THRESHOLDS.MEDIUM 
-                          ? 'bg-amber-500' 
+                      item.carbonScore <= SCORE_THRESHOLDS.LOW
+                        ? 'bg-red-500'
+                        : item.carbonScore <= SCORE_THRESHOLDS.MEDIUM
+                          ? 'bg-amber-500'
                           : 'bg-emerald-500'
                     }`}
                     aria-hidden="true"
@@ -397,14 +477,12 @@ export default function Dashboard({ onNavigateToCalculator }) {
           ))}
         </div>
       </section>
-
     </div>
   );
 }
 
 Dashboard.propTypes = {
-  onNavigateToCalculator: PropTypes.func.isRequired,
+  onNavigateToCalculator: PropTypes.func.isRequired
 };
 
 Dashboard.defaultProps = {};
-

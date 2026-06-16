@@ -27,15 +27,17 @@ describe('BillScanner Component', () => {
   // 1. Initial State Render
   test('renders initial upload zone correctly', () => {
     render(<BillScanner onScanSuccess={onScanSuccessMock} />);
-    
-    expect(screen.getByRole('button', { name: /drag and drop your bill image here/i })).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('button', { name: /drag and drop your bill image here/i })
+    ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /scan bill/i })).not.toBeInTheDocument();
   });
 
   // 2. File Type Validation
   test('rejects file uploads with unsupported mimetypes', async () => {
     render(<BillScanner onScanSuccess={onScanSuccessMock} />);
-    
+
     const invalidFile = new File(['dummy content'], 'document.txt', { type: 'text/plain' });
     const dropzone = screen.getByRole('button', { name: /drag and drop your bill image here/i });
 
@@ -53,14 +55,14 @@ describe('BillScanner Component', () => {
   // 3. File Size Validation
   test('rejects file uploads exceeding the 5MB size limit', async () => {
     render(<BillScanner onScanSuccess={onScanSuccessMock} />);
-    
+
     // 6MB file
     const oversizedFile = {
       name: 'large-bill.png',
       size: 6 * 1024 * 1024,
       type: 'image/png'
     };
-    
+
     const dropzone = screen.getByRole('button', { name: /drag and drop your bill image here/i });
 
     fireEvent.drop(dropzone, {
@@ -75,7 +77,7 @@ describe('BillScanner Component', () => {
   // 4. Successful Upload and Reset Operations
   test('accepts valid images, displays preview, and handles resets correctly', async () => {
     render(<BillScanner onScanSuccess={onScanSuccessMock} />);
-    
+
     const validFile = new File(['image-bytes'], 'electricity.png', { type: 'image/png' });
     const dropzone = screen.getByRole('button', { name: /drag and drop your bill image here/i });
 
@@ -85,15 +87,21 @@ describe('BillScanner Component', () => {
 
     await waitFor(() => {
       expect(screen.getByRole('img', { name: /uploaded bill scan preview/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /scan the uploaded bill image/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /scan the uploaded bill image/i })
+      ).toBeInTheDocument();
     });
 
     // Clear uploaded file
     const clearBtn = screen.getByRole('button', { name: /clear selected file/i });
     await userEvent.click(clearBtn);
 
-    expect(screen.queryByRole('img', { name: /uploaded bill scan preview/i })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /drag and drop your bill image here/i })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('img', { name: /uploaded bill scan preview/i })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /drag and drop your bill image here/i })
+    ).toBeInTheDocument();
   });
 
   // 5. Successful Scan Execution
@@ -111,7 +119,7 @@ describe('BillScanner Component', () => {
     });
 
     render(<BillScanner onScanSuccess={onScanSuccessMock} />);
-    
+
     const validFile = new File(['image-bytes'], 'electricity.png', { type: 'image/png' });
     const dropzone = screen.getByRole('button', { name: /drag and drop your bill image here/i });
 
@@ -137,7 +145,7 @@ describe('BillScanner Component', () => {
     });
 
     render(<BillScanner onScanSuccess={onScanSuccessMock} />);
-    
+
     const validFile = new File(['image-bytes'], 'electricity.png', { type: 'image/png' });
     const dropzone = screen.getByRole('button', { name: /drag and drop your bill image here/i });
 
@@ -149,7 +157,9 @@ describe('BillScanner Component', () => {
     await userEvent.click(scanBtn);
 
     await waitFor(() => {
-      expect(screen.getAllByText(/server is currently busy scanning bills/i)[0]).toBeInTheDocument();
+      expect(
+        screen.getAllByText(/server is currently busy scanning bills/i)[0]
+      ).toBeInTheDocument();
       expect(onScanSuccessMock).not.toHaveBeenCalled();
     });
   });
