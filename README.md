@@ -190,6 +190,7 @@ Modular architecture with separated concerns (`routes`, `components`, `layout`, 
 🌐 Live Demo
 
 🔗 View Live App
+https://ecosense-ai-522115183355.us-central1.run.app
 
 
 🤝 How It Solves the Challenge
